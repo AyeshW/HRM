@@ -6,7 +6,7 @@ function OpenCon(){
     $db = "edbms";
 
     $conn = new mysqli($dbhost,$dbuser,$dbpass,$db) or die("Connection Field". $conn->error);
-
+    //moda lakata git kiya denawa
     return $conn;
 }
 
