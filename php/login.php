@@ -20,7 +20,7 @@
             $_SESSION["loggedin"]=true;
             $_SESSION["username"]=$username;
             
-            header("location:../index.html");
+            header("location:../dashboard.html");
         }else{
             header('location:../index.html');
         }
