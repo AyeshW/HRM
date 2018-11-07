@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2018 at 04:29 PM
+-- Generation Time: Nov 07, 2018 at 10:58 PM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.0.30
 
@@ -78,7 +78,27 @@ CREATE TABLE `dependent_info` (
 INSERT INTO `dependent_info` (`Employee_id`, `first_name`, `last_name`, `birthday`, `relationship`) VALUES
 ('10001', 'Kasun', 'Prasad', '2000-11-07', 'Son'),
 ('10002', 'Maria', 'George', '1974-06-12', 'Wife'),
-('10002', 'Mary', 'Jane', '2017-11-23', 'Daughter');
+('10002', 'Mary', 'Jane', '2017-11-23', 'Daughter'),
+('10004', 'Tony', 'Maven', '2004-09-26', 'Son');
+
+--
+-- Triggers `dependent_info`
+--
+DELIMITER $$
+CREATE TRIGGER `dependent_info_validation` BEFORE INSERT ON `dependent_info` FOR EACH ROW BEGIN
+    DECLARE p_birthday DATE;
+    SELECT birthday INTO p_birthday FROM employee WHERE employee.Employee_id = NEW.Employee_id;
+
+    IF NEW.relationship = 'Son' OR NEW.relationship = 'Daughter' THEN
+      IF (EXTRACT(YEAR FROM NEW.birthday) - EXTRACT(YEAR  FROM p_birthday) <= 18) THEN
+        SIGNAL SQLSTATE VALUE '45003'
+          SET MESSAGE_TEXT = 'Unacceptable birthday for child';
+      end if;
+    end if;
+
+  END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -124,7 +144,9 @@ CREATE TABLE `employee` (
 
 INSERT INTO `employee` (`Employee_id`, `First_Name`, `Middle_Name`, `Last_Name`, `birthday`, `Marital_Status`, `Gender`, `supervisor_emp_id`) VALUES
 ('10001', 'Charith', 'Rajitha', 'Perera', '1964-11-07', 'Married', 'Male', NULL),
-('10002', 'Ayesh', 'Malindu', 'Weerasinghe', '2018-11-07', 'Unmarried', 'Male', '10001');
+('10002', 'Ayesh', 'Malindu', 'Weerasinghe', '1980-11-07', 'Unmarried', 'Male', '10001'),
+('10003', 'Kalana', 'Dhananjaya', 'Silva', '1956-11-17', 'Unmarried', 'Male', '10001'),
+('10004', 'Lakmali', 'Chandrapraba', 'Piyarathna', '1985-08-12', 'Married', 'Female', '10003');
 
 --
 -- Triggers `employee`
@@ -135,8 +157,14 @@ CREATE TRIGGER `employee_validation` BEFORE INSERT ON `employee` FOR EACH ROW BE
     IF NEW.Employee_id NOT LIKE "_____" THEN
       SIGNAL SQLSTATE VALUE '45000'
         SET MESSAGE_TEXT = 'Invalid employee id';
+    end if;
 
-end if;
+    -- checking age of the employee is greater than 18 and less than 100
+    IF (EXTRACT(YEAR FROM CURRENT_DATE()) - EXTRACT(YEAR  FROM NEW.birthday) <= 18) OR (EXTRACT(YEAR FROM CURRENT_DATE()) - EXTRACT(YEAR  FROM NEW.birthday) > 100) THEN
+
+      SIGNAL SQLSTATE VALUE '45002'
+        SET MESSAGE_TEXT = 'Unacceptable birthday';
+    end if;
   END
 $$
 DELIMITER ;
@@ -167,6 +195,66 @@ INSERT INTO `employee_leaves` (`Leave_id`, `Employee_id`, `start_date`, `end_dat
 ('3', '10002', '2018-11-08', '2018-11-08', 'Annual', 'Personal', 'Pending'),
 ('4', '10002', '2018-11-01', '2018-11-01', 'No-pay', 'Sickness', 'Rejected');
 
+--
+-- Triggers `employee_leaves`
+--
+DELIMITER $$
+CREATE TRIGGER `employee_leaves_validation` BEFORE INSERT ON `employee_leaves` FOR EACH ROW BEGIN
+    /*DECLARE gender ENUM("Male","Female");
+    SELECT Gender INTO gender FROM employee WHERE NEW.Employee_id = employee.Employee_id;
+
+    IF NEW.Leave_Type = "Maternity" AND gender = "Male" THEN
+      SIGNAL SQLSTATE VALUE '45005'
+        SET MESSAGE_TEXT = 'Maternity leaves are only for females';
+    end if;*/
+
+    DECLARE grade VARCHAR(7);
+    DECLARE avail_annual int;
+    DECLARE avail_casual int;
+    DECLARE avail_maternity int;
+    DECLARE avail_nopay int;
+    DECLARE taken_annual_leaves int;
+    DECLARE taken_casual_leaves int;
+    DECLARE taken_maternity_leaves int;
+    DECLARE taken_nopay_leaves int;
+
+    SELECT pay_grade_id INTO grade FROM payroll_info WHERE  NEW.Employee_id = payroll_info.Employee_id;
+
+    SELECT Annual_leaves INTO avail_annual FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+    SELECT Annual_count INTO taken_annual_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+
+    IF NEW.Leave_Type = 'Annual' AND (avail_annual <= taken_annual_leaves) THEN
+      SIGNAL SQLSTATE VALUE '45006'
+        set  message_text = 'No more annual leaves are allowed';
+    end if;
+
+    SELECT Casual_leaves INTO avail_casual FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+    SELECT casual_count INTO taken_casual_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+
+    IF NEW.Leave_Type = 'Casual' AND (avail_casual <= taken_casual_leaves) THEN
+      SIGNAL SQLSTATE VALUE '45007'
+        set  message_text = 'No more casual leaves are allowed';
+    end if;
+
+    SELECT Maternity_leaves INTO avail_maternity FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+    SELECT maternity_count INTO taken_maternity_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+
+    IF NEW.Leave_Type = 'Maternity' AND (avail_maternity <= taken_maternity_leaves) THEN
+      SIGNAL SQLSTATE VALUE '45008'
+        set  message_text = 'No more maternity leaves are allowed';
+    end if;
+
+    SELECT No_pay_leaves INTO avail_nopay FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+    SELECT no_pay_count INTO taken_nopay_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+
+    IF NEW.Leave_Type = 'No-pay' AND (avail_nopay <= taken_nopay_leaves) THEN
+      SIGNAL SQLSTATE VALUE '45009'
+        set  message_text = 'No more no-pay leaves are allowed';
+    end if;
+  END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -186,7 +274,9 @@ CREATE TABLE `employementdetails` (
 
 INSERT INTO `employementdetails` (`Employee_id`, `Employement_status_id`, `department_id`, `job_id`) VALUES
 ('10001', '2', '100', '1'),
-('10002', '3', '100', '4');
+('10002', '3', '100', '4'),
+('10003', '1', '102', '3'),
+('10004', '2', '102', '2');
 
 -- --------------------------------------------------------
 
@@ -266,7 +356,9 @@ CREATE TABLE `payroll_info` (
 
 INSERT INTO `payroll_info` (`Employee_id`, `pay_grade_id`, `epf_no`) VALUES
 ('10001', '1', '700239'),
-('10002', '2', '800896');
+('10002', '2', '800896'),
+('10003', '2', '800756'),
+('10004', '3', '900123');
 
 -- --------------------------------------------------------
 
@@ -312,7 +404,9 @@ CREATE TABLE `taken_no_of_leaves` (
 
 INSERT INTO `taken_no_of_leaves` (`Employee_id`, `Annual_count`, `casual_count`, `maternity_count`, `no_pay_count`) VALUES
 ('10001', 0, 1, 0, 0),
-('10002', 1, 3, 0, 1);
+('10002', 1, 3, 0, 1),
+('10003', 0, 0, 0, 0),
+('10004', 0, 7, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -333,6 +427,22 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`user_id`, `username`, `password`, `type`) VALUES
 (1, 'Ayesh', 'ayesh123', 'Employee');
+
+--
+-- Triggers `user`
+--
+DELIMITER $$
+CREATE TRIGGER `user_validation` BEFORE INSERT ON `user` FOR EACH ROW BEGIN
+    
+    -- checking password length
+    IF LENGTH(NEW.password) < 6 THEN
+      SIGNAL SQLSTATE VALUE '45004'
+        SET MESSAGE_TEXT = 'Password should have 6 minimum number of characters';
+    end if;
+
+  END
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
