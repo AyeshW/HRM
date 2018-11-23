@@ -11,16 +11,27 @@
 
     $username = $_POST['username'];
     $password = md5($_POST['password']);
-    echo $username, $password;
+    
     if(isset($username) && isset($password)){
         $sql = "SELECT * FROM user WHERE username = '$username' and password ='$password'";
         $results = $con -> query($sql);
+        echo $username;
         $count=mysqli_num_rows($results);
+        if ($count > 0) {
+            // output data of each row
+            while($row = $results->fetch_assoc()) {
+                $usertype = $row["type"];
+            }
+        } else {
+        }
+
         if($count==1){
+            
             $_SESSION["loggedin"]=true;
             $_SESSION["username"]=$username;
+            $_SESSION["usertype"]=$usertype;
             
-            header("location:../dashboard.html");
+            header('location:dashboard.php');
         }else{
             header('location:../index.html');
         }
