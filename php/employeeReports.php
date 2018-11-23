@@ -74,6 +74,9 @@ CloseCon($conn);
             $res = $stmt->get_result()->fetch_all();
             CloseCon($conn);
             $count=count($res);
+            if($count == 0){
+                echo "<h4> &nbsp;&nbsp;&nbsp;&nbsp; No any Employee </h4> <br> ";
+            }
             foreach($res as $detail){
         ?>
         <table class="table">
