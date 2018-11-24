@@ -589,3 +589,23 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+SELECT Employee_id  FROM payroll_info WHERE payroll_info.pay_grade_id = '1' ;
+
+/* Function for selecting employee on job title,pay grade etc. */
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByPayGrade(IN given_pay_grade_id VARCHAR(7), OUT name_set VARCHAR(20))
+
+BEGIN
+
+SELECT Employee_id INTO name_set FROM payroll_info WHERE payroll_info.pay_grade_id = given_pay_grade_id ;
+
+END
+
+DELIMITER ;
+
+CALL employeeByPayGrade(('1'),@name_set);
+
+SELECT @name_set;
