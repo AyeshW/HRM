@@ -589,3 +589,72 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+/* Function for selecting employee on pay grade */
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByPayGrade(IN given_pay_grade_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN payroll_info NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE payroll_info.pay_grade_id = given_pay_grade_id ;
+
+END $$
+
+DELIMITER ;
+
+CALL employeeByPayGrade('2');
+
+/* Function for selecting employee on pay grade */
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByJobTitle(IN given_job_title_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE employementdetails.job_id = given_job_title_id ;
+
+END $$
+
+DELIMITER ;
+
+CALL employeeByJobTitle('1');
+
+
+/* Function for selecting employee on employement status*/
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByStatus(IN given_status_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE employementdetails.Employement_status_id = given_status_id ;
+
+END $$
+
+DELIMITER ;
+
+CALL employeeByStatus('1');
+
+
+/* Function for selecting employee on department */
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS employeeByDepartment$$
+
+CREATE PROCEDURE employeeByDepartment(IN given_department_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE employementdetails.department_id = given_department_id ;
+
+END $$
+
+DELIMITER ;
+
+CALL employeeByDepartment('100');
