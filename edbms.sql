@@ -605,7 +605,7 @@ END $$
 
 DELIMITER ;
 
-CALL employeeByPayGrade('2');
+-- CALL employeeByPayGrade('2');
 
 /* Function for selecting employee on pay grade */
 
@@ -621,7 +621,7 @@ END $$
 
 DELIMITER ;
 
-CALL employeeByJobTitle('1');
+-- CALL employeeByJobTitle('1');
 
 
 /* Function for selecting employee on employement status*/
@@ -638,7 +638,7 @@ END $$
 
 DELIMITER ;
 
-CALL employeeByStatus('1');
+-- CALL employeeByStatus('1');
 
 
 /* Function for selecting employee on department */
@@ -657,5 +657,5 @@ END $$
 
 DELIMITER ;
 
-CALL employeeByDepartment('100');
+-- CALL employeeByDepartment('100');
 

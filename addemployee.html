@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>DBMS</title>
+</head>
+<body>
+    <div class='wthree-pro'>
+        <h2>Employee registration form</h2>                
+    </div>
+    <form action="./php/AddEmployee.php" method="POST">
+        <input type="text" name="E_id" placeholder="Employee ID"><br><br>
+        <input type="text" name="first_name" placeholder="First Name"><br><br>
+        <input type="text" name="middle_name" placeholder="Middle Name "><br><br>
+        <input type="text" name="last_name" placeholder="Last Name"><br><br>
+        <input type="date" name="b_day" placeholder="Birthday"><br><br>
+        <label for="gender">Marital Status</label> 
+          <select id="marital_status" name="marital_status" /> 
+            <option value="Married">Married</option>       
+            <option value="Unmarried">Unmarried</option>             
+          </select><br><br>
+        <label for="gender">Gender</label> 
+          <select id="gender" name="gender" /> 
+            <option value="Male">Male</option>       
+            <option value="Female">Female</option>             
+          </select><br><br>
+        <input type="Number" name="supervisor_id" placeholder="Employee ID of the supervisor"><br><br>
+        <button class='button-login' type='submit' name='submit'>ENTER</button>
+    </form>
+</body>
+</html>
