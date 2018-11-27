@@ -8,12 +8,12 @@ include '../config/db_connection.php';
 
 
 $conn = OpenCon();
-$departmentList = "SELECT Department_Name FROM department";
-$department = $conn -> query($departmentList);
-
-
+$stmt = $conn->prepare("SELECT Department_Name FROM department");
+$stmt->execute();
+$department = $stmt->get_result();
 
 $depList = array();
+
 while($dep = mysqli_fetch_assoc($department)){
     array_push($depList,$dep["Department_Name"]);
 }

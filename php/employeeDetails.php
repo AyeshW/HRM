@@ -9,9 +9,10 @@ include '../config/db_connection.php';
 
 $conn = OpenCon();
 
-$sql="SELECT * FROM all_employee_data_for_admin";
+$stmt = $conn->prepare("SELECT * FROM all_employee_data_for_admin");
+$stmt->execute();
+$allData = $stmt->get_result();
 
-$allData=$conn -> query($sql);
 
 $array = array();
 while($row = mysqli_fetch_assoc($allData)){
@@ -21,10 +22,7 @@ while($row = mysqli_fetch_assoc($allData)){
 
 
 CloseCon($conn);
-/* 
-foreach($array as $details){
-    echo $details["First_Name"],$details["Gender"],"<br>";
-} */
+
 ?>
 
 <html>
