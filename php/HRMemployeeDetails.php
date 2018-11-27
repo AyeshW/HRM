@@ -8,16 +8,19 @@ include '../config/db_connection.php';
 
 
 $conn = OpenCon();
-$stmt = $conn->prepare("SELECT Department_Name FROM department");
+
+$sql="SELECT * FROM employee_details_hr";
+
+
+$stmt = $conn->prepare($sql);
 $stmt->execute();
-$department = $stmt->get_result();
+$allData = $stmt->get_result();
 
-$depList = array();
 
-while($dep = mysqli_fetch_assoc($department)){
-    array_push($depList,$dep["Department_Name"]);
+$array = array();
+while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
 }
-
 
 
 
@@ -56,36 +59,13 @@ CloseCon($conn);
 <body>
     <div class="container">
         <br><br>
-        
-        <?php 
-        foreach($depList as $depName){ 
-        ?>
-
-        <h2><?php echo $depName ?></h2>
-
-        <?php
-            $conn = OpenCon();
-
-            $stmt = $conn->prepare("SELECT * FROM employees_department WHERE Department_Name = ? ");
-            $stmt->bind_param('s', $depName);
-            //$que = "SELECT * FROM employees_department WHERE Department_Name ='Computer Science'";
-        
-            $stmt->execute();
-            $res = $stmt->get_result()->fetch_all();
-            CloseCon($conn);
-            $count=count($res);
-            if($count == 0){
-                echo "<h4> &nbsp;&nbsp;&nbsp;&nbsp; No any Employee </h4> <br> ";
-            }
-            foreach($res as $detail){
-        ?>
         <table class="table">
         <thead>
             <tr>
             <th scope="col">Employee ID</th>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
-            <th scope="col">Supervisor ID</th>
+            <th scope="col">Gender</th>
             <th scope="col">Job Role</th>
             <th scope="col">Department Name</th>
             <th scope="col">Employee Status</th>
@@ -93,18 +73,22 @@ CloseCon($conn);
             </tr>
         </thead>
         <tbody>
-            <tr>
             <?php
-            foreach($detail as $data){
-                echo "<td>",$data,"</td>";
-            }
+              foreach($array as $details){  
             ?>
-            
+            <tr>
+            <th scope="row"><?php echo $details["Employee_id"]; ?></th>
+            <td><?php echo $details["First_Name"]; ?></td>
+            <td><?php echo $details["Last_Name"]; ?></td>
+            <td><?php echo $details["Gender"]; ?></td>
+            <td><?php echo $details["Job_Name"]; ?></td>
+            <td><?php echo $details["Department_Name"]; ?></td>
+            <td><?php echo $details["Status_name"]; ?></td>
             </tr>
               <?php } ?>
         </tbody>
         </table>
-            <?php } ?>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

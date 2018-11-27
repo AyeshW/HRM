@@ -1,6 +1,6 @@
 <?php
     include '../config/db_connection.php';
-    $con = Opencon();
+    $conn = Opencon();
     session_start();
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
         //header("location: logout.php");
@@ -13,13 +13,18 @@
     $password = md5($_POST['password']);
     
     if(isset($username) && isset($password)){
-        $sql = "SELECT * FROM user WHERE username = '$username' and password ='$password'";
-        $results = $con -> query($sql);
-        echo $username;
-        $count=mysqli_num_rows($results);
+        $sql = "SELECT * FROM user WHERE username = ? and password = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ss',$username,$password);
+        
+    
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $count=count($res);
+
         if ($count > 0) {
             // output data of each row
-            while($row = $results->fetch_assoc()) {
+            while($row = $res->fetch_assoc()) {
                 $usertype = $row["type"];
             }
         } else {
@@ -36,5 +41,5 @@
             header('location:../index.html');
         }
     }
-    CloseCon($con);
+    CloseCon($conn);
 ?>
