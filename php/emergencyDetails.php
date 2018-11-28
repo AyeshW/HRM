@@ -6,34 +6,23 @@ if (!$_SESSION['loggedin']){
     die();
 }
 include '../config/db_connection.php';
-$dbhost='localhost';
-$dbname='edbms';
-$username='root';
-$password='';
 
 if(isset($_GET["empID"])){
     $empID=$_GET["empID"];
     
-    try{
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
+    $conn = OpenCon("root","");
+    $stmt = $conn->prepare('CALL getEmergencyDetails(?)');
+    $stmt->bind_param('s',$empID);
+    $stmt->execute();
+    $allData = $stmt->get_result();
 
-    $sql = 'CALL getEmergencyDetails('.$empID.')';
-      
-    
-    $q = $pdo->query($sql);
-    $q->setFetchMode(PDO::FETCH_ASSOC);
-    
     $array = array();
-    while($row = $q->fetch()){
-        $array[] = $row;
-    }
-
-    
-} 
-catch (PDOException $e) {
-    die("Error occurred:" . $e->getMessage());
-    }
+while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
 }
+
+}
+
 
 
 ?>
