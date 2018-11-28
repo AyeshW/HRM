@@ -122,7 +122,24 @@ INSERT INTO `emergency_details` (`Employee_id`, `contact_no`, `Relationship`, `A
 ('10001', 774522654, 'Mother', '20/A, Piliyandala', 'Kamala');
 
 -- --------------------------------------------------------
+-- Table structure for table `address`
+--
 
+CREATE TABLE `Address` (
+  `Employee_id` varchar(7) NOT NULL,
+  `po_box` int(10) ,
+  `street` varchar(20) NOT NULL,
+  `town` varchar(20) NOT NULL,
+  `country` varchar(20) NOT NULL,
+  PRIMARY KEY (Employee_id),
+  FOREIGN KEY (Employee_id) REFERENCES Employee(Employee_id) on DELETE CASCADE on UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `address`
+--
+INSERT INTO Address (Employee_id,po_box,street,town,country) values ('10002',100,'udugama street','Kalugamuwa','Sri lanka');
+--------------------------------------------------------------
 --
 -- Table structure for table `employee`
 --
@@ -654,7 +671,26 @@ END $$
 
 DELIMITER ;
 
+--procedure for getting user details by user id--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS getEmergencyDetails$$
+
+CREATE PROCEDURE getEmergencyDetails(IN Employee_id VARCHAR(7))
+
+BEGIN
+
+SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee_id= Employee_id;
+
+END $$
+
+DELIMITER ;
+
+
+
 --addEmployee procedure--
+
 DELIMITER $$
 
 CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
