@@ -32,6 +32,7 @@ GRANT EXECUTE ON PROCEDURE employeeByJobTitle TO 'HRM'@'localhost';
 
 GRANT SELECT ON edbms.all_employee_data_for_admin TO 'EMP'@'localhost'
 
+
 GRANT EXECUTE ON PROCEDURE remaining_annual_leaves_procedure TO 'EMP'@'localhost';
 GRANT EXECUTE ON PROCEDURE remaining_casual_leaves_procedure TO 'EMP'@'localhost';
 GRANT EXECUTE ON PROCEDURE remaining_maternity_leaves_procedure TO 'EMP'@'localhost';
