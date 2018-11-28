@@ -449,7 +449,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`Employee_id`, `username`, `password`, `type`,`dbname`,`dbpass`) VALUES
-(10001, 'Ayesh', 'ayesh123', 'Employee','root','');
+(10001, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin','root',''),(10002, 'emp', '21232f297a57a5a743894a0e4a801fc3', 'Employee','root',''),(10002, 'emp', '21232f297a57a5a743894a0e4a801fc3', 'HRM','root','');
 
 --
 -- Triggers `user`
