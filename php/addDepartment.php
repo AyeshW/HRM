@@ -101,13 +101,14 @@ if($stmt = $conn->prepare($sql)) {
 <button onclick="window.location.href='../adminDashboard.html">Go to Home</button>
 }
 ?> -->*/
+
+
 $stmt = $conn->prepare('CALL addDepartment(
 ?,?,?,?)');
 
-$stmt->bind_param('ssss',$deptId,$deptName,$building,$description);
+$stmt->bind_param('ssss', $deptId, $deptName, $building, $description);
 $stmt->execute();
 $allData = $stmt->get_result();
-
 CloseCon($conn);
 
 
