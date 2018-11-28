@@ -7,67 +7,109 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-
-$conn = OpenCon("root","");
+$dbhost='localhost';
+$dbname='edbms';
+$username='root';
+$password='';
 
 if(isset($_GET["department"])){
     $dept=$_GET["department"];
+    
+    try{
+    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
 
-    $stmt = $conn->prepare("CALL getEmployeeByDepartment($dept)");
-    $stmt->execute();
-    $allData = $stmt->get_result();
-
+    $sql = 'CALL EmployeeByDepartment('.$dept.')';
+      
+    
+    $q = $pdo->query($sql);
+    $q->setFetchMode(PDO::FETCH_ASSOC);
+    
     $array = array();
-    while($row = mysqli_fetch_assoc($allData)){
+    while($row = $q->fetch()){
         $array[] = $row;
     }
-}
-
-
-if(isset($_GET["empStatus"])){
-    $empStatus=$_GET["empStatus"];
-
-    $stmt = $conn->prepare("CALL employeeByStatus($empStatus)");
-    $stmt->execute();
-    $allData = $stmt->get_result();
-
-
-    $array = array();
-    while($row = mysqli_fetch_assoc($allData)){
-        $array[] = $row;
+    
+} 
+catch (PDOException $e) {
+    die("Error occurred:" . $e->getMessage());
     }
 }
 
 if(isset($_GET["payGrade"])){
     $payGrade=$_GET["payGrade"];
+    
+    try{
+    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
 
-    $stmt = $conn->prepare("CALL employeeByPayGrade($payGrade)");
-    $stmt->execute();
-    $allData = $stmt->get_result();
-
-
+    $sql = 'CALL EmployeeBypayGrade('.$payGrade.')';
+      
+    
+    $q = $pdo->query($sql);
+    $q->setFetchMode(PDO::FETCH_ASSOC);
+    
     $array = array();
-    while($row = mysqli_fetch_assoc($allData)){
+    while($row = $q->fetch()){
         $array[] = $row;
     }
+    
+} 
+catch (PDOException $e) {
+    die("Error occurred:" . $e->getMessage());
+    }
 }
+
+if(isset($_GET["empStatus"])){
+    $empStatus=$_GET["empStatus"];
+    
+    try{
+    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
+
+    $sql = 'CALL EmployeeByStatus('.$empStatus.')';
+      
+    
+    $q = $pdo->query($sql);
+    $q->setFetchMode(PDO::FETCH_ASSOC);
+    
+    $array = array();
+    while($row = $q->fetch()){
+        $array[] = $row;
+    }
+    
+} 
+catch (PDOException $e) {
+    die("Error occurred:" . $e->getMessage());
+    }
+}
+
 
 if(isset($_GET["jobTitle"])){
     $jobTitle=$_GET["jobTitle"];
+    
+    try{
+    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
 
-    $stmt = $conn->prepare("CALL employeeByJobTitle($jobTitle)");
-    $stmt->execute();
-    $allData = $stmt->get_result();
-
-
+    $sql = 'CALL EmployeeByStatus('.$jobTitle.')';
+      
+    
+    $q = $pdo->query($sql);
+    $q->setFetchMode(PDO::FETCH_ASSOC);
+    
     $array = array();
-    while($row = mysqli_fetch_assoc($allData)){
+    while($row = $q->fetch()){
         $array[] = $row;
+    }
+    
+} 
+catch (PDOException $e) {
+    die("Error occurred:" . $e->getMessage());
     }
 }
 
 
-CloseCon($conn);
+
+
+
+
 
 
 ?>
@@ -93,29 +135,34 @@ CloseCon($conn);
             <th scope="col">Supervisor Employee ID</th>
             <th scope="col">Job Name</th>
             <th scope="col">Status Name</th>
-            
+            <th scope="col">Department Name</th>
 
             </tr>
         </thead>
         <tbody>
+        
             <?php
               foreach($array as $details){  
             ?>
             <tr>
             <th scope="row"><?php echo $details["Employee_id"]; ?></th>
-            <td><?php echo $details["Contact Number"]; ?></td>
-            <td><?php echo $details["Relationship"]; ?></td>
-            <td><?php echo $details["Address"]; ?></td>
+            <td><?php echo $details["first_name"]; ?></td>
+            <td><?php echo $details["last_name"]; ?></td>
+            <td><?php echo $details["birthday"]; ?></td>
+            <td><?php echo $details["Gender"]; ?></td>
+            <td><?php echo $details["supervisor_emp_id"]; ?></td>
             <td><?php echo $details["Job_Name"]; ?></td>
-            <td><?php echo $details["Name"]; ?></td>
+            <td><?php echo $details["Status_name"]; ?></td>
+            <td><?php echo $details["Department_Name"]; ?></td>
+            
             
             </tr>
               <?php } ?>
+        
         </tbody>
         </table>
 
-        <button href="../index.html">Go to Home</button>
-
+       
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
