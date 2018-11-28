@@ -658,7 +658,6 @@ END $$
 DELIMITER ;
 
 CALL employeeByDepartment('100');
-<<<<<<< HEAD
 
 CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
 
@@ -669,5 +668,4 @@ GRANT ALL PRIVILEGES ON hrm.* TO 'kalana'@'localhost';
 CREATE UNIQUE INDEX employeeIndex ON employee(Employee_id);
 
 CREATE UNIQUE INDEX emergencyIndex ON emergency_details(Employee_id);
-=======
->>>>>>> 66864aec4d2b0c14089f934bf2b28c053e83943a
+

@@ -1,8 +1,8 @@
 <?php
-function OpenCon(){
+function OpenCon($dbuser,$dbpass){
     $dbhost = "localhost";
-    $dbuser =   "root";
-    $dbpass = "";
+    $dbuser =   $dbuser;
+    $dbpass = $dbpass;
     $db = "edbms";
 
     $conn = new mysqli($dbhost,$dbuser,$dbpass,$db) or die("Connection Field". $conn->error);
