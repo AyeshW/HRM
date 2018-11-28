@@ -6,8 +6,11 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+$dbuser=$_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$con = Opencon($dbuser,$dbpass);
 
-$conn = OpenCon();
+
 $stmt = $conn->prepare("SELECT Department_Name FROM department");
 $stmt->execute();
 $department = $stmt->get_result();

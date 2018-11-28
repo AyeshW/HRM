@@ -6,8 +6,9 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-
-$conn = OpenCon();
+$dbuser=$_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$con = Opencon($dbuser,$dbpass);
 
 $sql="SELECT * FROM employee_details_hr";
 

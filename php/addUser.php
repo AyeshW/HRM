@@ -7,8 +7,9 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-
-$conn = OpenCon("root","");
+$dbuser = $_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$conn = OpenCon($dbuser,$dbpass);
 
 $empID=$_POST["empID"];
 $fname=$_POST["fname"];

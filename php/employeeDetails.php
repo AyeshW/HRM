@@ -6,8 +6,9 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-
-$conn = OpenCon();
+$dbuser=$_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$con = Opencon($dbuser,$dbpass);
 
 $stmt = $conn->prepare("SELECT * FROM all_employee_data_for_admin");
 $stmt->execute();

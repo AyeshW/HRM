@@ -6,16 +6,16 @@ if (!$_SESSION['loggedin']){
     die();
 }
 include '../config/db_connection.php';
-
+$dbuser = $_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
 if(isset($_GET["department"])){
     $dept=$_GET["department"];
-    
-    $conn = OpenCon("root","");
+    $conn = OpenCon($dbuser,$dbpass);
     $stmt = $conn->prepare('CALL EmployeeByDepartment(?)');
     $stmt->bind_param('s',$dept);
     $stmt->execute();
     $allData = $stmt->get_result();
-
+    CloseCon($conn);
     $array = array();
     while($row = mysqli_fetch_assoc($allData)){
     $array[] = $row;
@@ -26,13 +26,12 @@ if(isset($_GET["department"])){
 
 if(isset($_GET["payGrade"])){
     $payGrade=$_GET["payGrade"];
-    
-    $conn = OpenCon("root","");
+    $conn = OpenCon($dbuser,$dbpass);
     $stmt = $conn->prepare('CALL EmployeeBypayGrade(?)');
     $stmt->bind_param('i',$payGrade);
     $stmt->execute();
     $allData = $stmt->get_result();
-
+    CloseCon($conn);
     $array = array();
     while($row = mysqli_fetch_assoc($allData)){
     $array[] = $row;
@@ -43,13 +42,12 @@ if(isset($_GET["payGrade"])){
 
 if(isset($_GET["empStatus"])){
     $empStatus=$_GET["empStatus"];
-    
-    $conn = OpenCon("root","");
+    $conn = OpenCon($dbuser,$dbpass);
     $stmt = $conn->prepare('CALL EmployeeByStatus(?)');
     $stmt->bind_param('i',$empStatus);
     $stmt->execute();
     $allData = $stmt->get_result();
-
+    CloseCon($conn);
     $array = array();
     while($row = mysqli_fetch_assoc($allData)){
     $array[] = $row;
@@ -61,12 +59,12 @@ if(isset($_GET["empStatus"])){
 if(isset($_GET["jobTitle"])){
     $jobTitle=$_GET["jobTitle"];
     
-    $conn = OpenCon("root","");
+    $conn = OpenCon($dbuser,$dbpass);
     $stmt = $conn->prepare('CALL employeeByJobTitle(?)');
     $stmt->bind_param('i',$jobTitle);
     $stmt->execute();
     $allData = $stmt->get_result();
- 
+    CloseCon($conn);
     $array = array();
     while($row = mysqli_fetch_assoc($allData)){
     $array[] = $row;

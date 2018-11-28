@@ -6,16 +6,17 @@ if (!$_SESSION['loggedin']){
     die();
 }
 include '../config/db_connection.php';
-
+$dbuser = $_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
 if(isset($_GET["empID"])){
     $empID=$_GET["empID"];
     
-    $conn = OpenCon("root","");
+    $conn = OpenCon($dbuser,$dbpass);
     $stmt = $conn->prepare('CALL getEmergencyDetails(?)');
     $stmt->bind_param('s',$empID);
     $stmt->execute();
     $allData = $stmt->get_result();
-
+    CloseCon($conn);
     $array = array();
 while($row = mysqli_fetch_assoc($allData)){
     $array[] = $row;

@@ -1,7 +1,10 @@
 <?php
     include '../config/db_connection.php';
-    $con = Opencon();
+    
     session_start();
+    $dbuser=$_SESSION["dbuser"];
+    $dbpass = $_SESSION["dbpass"];
+    $con = Opencon($dbuser,$dbpass);
     
     $sql="SELECT * FROM employee";
     $results = $con->query($sql);
