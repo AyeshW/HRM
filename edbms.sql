@@ -901,5 +901,5 @@ END $$
 
 DELIMITER ;
 
-
+CREATE VIEW viewPendingLeaves as SELECT Employee_id,start_date,end_date,Leave_Type,Reason FROM employee_leaves WHERE status = 'Pending';
 
