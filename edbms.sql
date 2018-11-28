@@ -605,8 +605,6 @@ END $$
 
 DELIMITER ;
 
-CALL employeeByPayGrade('2');
-
 /* Function for selecting employee on pay grade */
 
 DELIMITER $$
@@ -620,8 +618,6 @@ SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Depart
 END $$
 
 DELIMITER ;
-
-CALL employeeByJobTitle('1');
 
 
 /* Function for selecting employee on employement status*/
@@ -637,8 +633,6 @@ SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Depart
 END $$
 
 DELIMITER ;
-
-CALL employeeByStatus('1');
 
 
 /* Function for selecting employee on department */
@@ -656,8 +650,6 @@ SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Depart
 END $$
 
 DELIMITER ;
-
-CALL employeeByDepartment('100');
 
 CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
 
