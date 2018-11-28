@@ -10,29 +10,74 @@ include '../config/db_connection.php';
 $empID="10001";
 $conn = OpenCon("root","");
 
-$stmt = $conn->prepare("SELECT remaining_annual_leaves(?)");
+$stmt = $conn->prepare('CALL remaining_annual_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
 $stmt->execute();
+
 $remAnnual = $stmt->get_result();
 
+$array = array();
+while($row = mysqli_fetch_assoc($remAnnual)){
+    $array[] = $row;
+}
+$remAnnual=$array[0]['number'];
 echo($remAnnual);
 
 
-$stmt = $conn->prepare("SELECT remaining_casual_leaves(?)");
+$stmt = $conn->prepare('CALL remaining_annual_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
 $stmt->execute();
+
+$remAnnual = $stmt->get_result();
+
+$array = array();
+while($row = mysqli_fetch_assoc($remAnnual)){
+    $array[] = $row;
+}
+$remAnnual=$array[0]['number'];
+echo($remAnnual);
+
+
+$stmt = $conn->prepare('CALL remaining_casual_leaves_procedure(?)');
+$stmt->bind_param('s',$empID);
+$stmt->execute();
+
 $remCasual = $stmt->get_result();
 
-$stmt = $conn->prepare("SELECT remaining_maternity_leaves(?)");
+$array = array();
+while($row = mysqli_fetch_assoc($remCasual)){
+    $array[] = $row;
+}
+$remCasual=$array[0]['number'];
+echo($remCasual);
+
+
+$stmt = $conn->prepare('CALL remaining_maternity_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
 $stmt->execute();
+
 $remMaternity = $stmt->get_result();
 
-$stmt = $conn->prepare("SELECT remaining_no_pay_leaves(?)");
+$array = array();
+while($row = mysqli_fetch_assoc($remMaternity)){
+    $array[] = $row;
+}
+$remMaternity=$array[0]['number'];
+echo($remMaternity);
+
+
+$stmt = $conn->prepare('CALL remaining_no_pay_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
 $stmt->execute();
+
 $remNoPay = $stmt->get_result();
 
+$array = array();
+while($row = mysqli_fetch_assoc($remNoPay)){
+    $array[] = $row;
+}
+$remNoPay=$array[0]['number'];
+echo($remMaternity);
 
 
 CloseCon($conn);
