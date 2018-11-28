@@ -7,25 +7,21 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-
-
-
-
-
 if(isset($_GET["empID"])){
     $empID=$_GET["empID"];
     
-    $conn = OpenCon();
+    $conn = OpenCon("root","");
     $stmt = $conn->prepare('CALL getEmergencyDetails(?)');
-    $stmt->bind_param('s',$empID)
+    $stmt->bind_param('s',$empID);
     $stmt->execute();
-    
-    $array = array();
-    while($row = $q->fetch()){
-        $array[] = $row;
-    }
+    $allData = $stmt->get_result();
 
-    
+    $array = array();
+while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
+}
+
+}
 
 
 
