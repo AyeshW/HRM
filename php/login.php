@@ -28,6 +28,8 @@
             // output data of each row
             while($row = $res->fetch_assoc()) {
                 $usertype = $row["type"];
+                $dbuser = $row["dbname"];
+                $dbpass = $row["dbpass"];
             }
         } else {
         }
@@ -37,6 +39,9 @@
             $_SESSION["loggedin"]=true;
             $_SESSION["username"]=$username;
             $_SESSION["usertype"]=$usertype;
+            $_SESSION["dbuser"]=$dbuser;
+            $_SESSION["dbpass"]=$dbpass;
+            
             
             header('location:dashboard.php');
         }else{
