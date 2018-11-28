@@ -1,7 +1,7 @@
 <?php
     include '../config/db_connection.php';
-    $dbuser = 'root';
-    $dbpass = '';
+    $dbuser = 'universal';
+    $dbpass = '1234';
     $conn = Opencon($dbuser,$dbpass);
     session_start();
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
@@ -27,6 +27,7 @@
         if ($count > 0) {
             // output data of each row
             while($row = $res->fetch_assoc()) {
+                $employeeID = $row["Employee_id"];
                 $usertype = $row["type"];
                 $dbuser = $row["dbname"];
                 $dbpass = $row["dbpass"];
@@ -37,6 +38,7 @@
         if($count==1){
             
             $_SESSION["loggedin"]=true;
+            $_SESSION["Employee_id"] = $employeeID;
             $_SESSION["username"]=$username;
             $_SESSION["usertype"]=$usertype;
             $_SESSION["dbuser"]=$dbuser;
