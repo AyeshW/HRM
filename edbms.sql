@@ -605,8 +605,8 @@ END $$
 
 DELIMITER ;
 
--- CALL employeeByPayGrade('2');
 
+\
 /* Function for selecting employee on pay grade */
 
 DELIMITER $$
@@ -621,7 +621,6 @@ END $$
 
 DELIMITER ;
 
--- CALL employeeByJobTitle('1');
 
 
 /* Function for selecting employee on employement status*/
@@ -638,7 +637,6 @@ END $$
 
 DELIMITER ;
 
--- CALL employeeByStatus('1');
 
 
 /* Function for selecting employee on department */
@@ -657,7 +655,7 @@ END $$
 
 DELIMITER ;
 
--- CALL employeeByDepartment('100');
+
 
 --Functions--
 delimiter $$
@@ -707,6 +705,7 @@ delimiter ;
 
 
 --End of functions--
+
 
 CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
 
