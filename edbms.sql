@@ -415,10 +415,14 @@ INSERT INTO `taken_no_of_leaves` (`Employee_id`, `Annual_count`, `casual_count`,
 --
 
 CREATE TABLE `user` (
-  `user_id` int(11) NOT NULL,
+  `Employee_ID` varchar(7) NOT NULL,
   `username` varchar(20) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `type` enum('Admin','Employee') NOT NULL
+  `dbname` varchar(20) NOT NULL,
+  `dbpass` varchar(255) NOT NULL,
+  `type` enum('HRM','Employee') NOT NULL,
+    FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
