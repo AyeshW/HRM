@@ -800,12 +800,3 @@ return no_pay;
 end
 $$
 delimiter ;
-
-
---End of functions--
-
-
-
-
-
-
