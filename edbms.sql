@@ -863,7 +863,7 @@ end
 $$
 delimiter ;
 
-/* Procedure for viewing personal information */
+/* Procedure for viewing personal information 
 
 DELIMITER $$
 
@@ -879,7 +879,7 @@ END $$
 
 DELIMITER ;
 
-/* Procedure for viewing personal information */
+/* Procedure for viewing personal information 
 
 DELIMITER $$
 
@@ -900,3 +900,14 @@ END IF;
 END $$
 
 DELIMITER ;
+
+*/
+
+delimiter $$
+create PROCEDURE viewEmployeeInfo(IN E_id varchar(7))
+BEGIN
+
+select * from all_employee_data_for_admin where all_employee_data_for_admin.Employee_id = E_id ;
+end
+$$
+delimiter ;

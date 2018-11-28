@@ -8,7 +8,7 @@ include '../config/db_connection.php';
 
 $dbuser=$_SESSION["dbuser"];
 $dbpass = $_SESSION["dbpass"];
-$conn = Opencon("root","");
+$conn = Opencon("$dbuser",$dbpass);
 
 
 //$empID=$_SESSION['Employee_id'];
@@ -72,6 +72,7 @@ CloseCon($conn);
             <th scope="col">Job Role</th>
             <th scope="col">Department Name</th>
             <th scope="col">Employee Status</th>
+            <th scope="col">E P F Number</th>
 
             </tr>
         </thead>
@@ -87,6 +88,7 @@ CloseCon($conn);
             <td><?php echo $details["Job_Name"]; ?></td>
             <td><?php echo $details["Department_Name"]; ?></td>
             <td><?php echo $details["Status_name"]; ?></td>
+            <td><?php echo $details["epf_no"]; ?></td>
             </tr>
               <?php } ?>
         </tbody>
