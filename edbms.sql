@@ -706,11 +706,7 @@ delimiter ;
 --End of functions--
 
 
-CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
 
-GRANT ALL PRIVILEGES ON hrm.* TO 'kalana'@'localhost';
-
-/*Create indexes for employee table and emergency details*/
 
 CREATE UNIQUE INDEX employeeIndex ON employee(Employee_id);
 
