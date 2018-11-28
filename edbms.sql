@@ -820,6 +820,49 @@ end
 $$
 delimiter ;
 
+--procedures for getting remaining leave counts by employee_id--
+
+delimiter $$
+create PROCEDURE remaining_no_pay_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+delimiter $$
+create PROCEDURE remaining_casual_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+
+delimiter $$
+create PROCEDURE remaining_annual_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select annual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+delimiter $$
+create PROCEDURE remaining_maternity_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
 /* Procedure for viewing personal information */
 
 DELIMITER $$
