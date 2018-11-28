@@ -1,7 +1,7 @@
 <?php
     include '../config/db_connection.php';
-    $dbuser = 'root';
-    $dbpass = '';
+    $dbuser = 'universal';
+    $dbpass = '1234';
     $conn = Opencon($dbuser,$dbpass);
     session_start();
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
