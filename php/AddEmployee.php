@@ -4,7 +4,7 @@
     session_start();
     $dbuser=$_SESSION["dbuser"];
     $dbpass = $_SESSION["dbpass"];
-    $con = Opencon($dbuser,$dbpass);
+    $conn = Opencon($dbuser,$dbpass);
     
     if(isset($_POST['submit'])) {
 	
@@ -19,8 +19,8 @@
         $supervisor_id=$_POST['supervisor_id'];
 
         $sql_b="INSERT INTO employee VALUES ('$eid','$first_name','$middle_name','$last_name','$b_day','$marital_state','$gender','$supervisor_id')";
-        $result_b=$con->query($sql_b);
-        CloseCon($con);
+        $result_b=$conn->query($sql_b);
+        
         header("Location:../AddEmployee.html?msg=Inserted successfully!");            
         exit();
     }
