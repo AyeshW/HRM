@@ -135,7 +135,8 @@ CREATE TABLE `employee` (
   `birthday` date NOT NULL,
   `Marital_Status` enum('Unmarried','Married') NOT NULL,
   `Gender` enum('Male','Female') NOT NULL,
-  `supervisor_emp_id` varchar(7) DEFAULT NULL
+  `supervisor_emp_id` varchar(7) DEFAULT NULL,
+  PRIMARY KEY (`Employee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -415,22 +416,24 @@ INSERT INTO `taken_no_of_leaves` (`Employee_id`, `Annual_count`, `casual_count`,
 --
 
 CREATE TABLE `user` (
-  `Employee_ID` varchar(7) NOT NULL,
+  `Employee_id` varchar(7) NOT NULL,
   `username` varchar(20) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `dbname` varchar(20) NOT NULL,
   `dbpass` varchar(255) NOT NULL,
   `type` enum('HRM','Employee') NOT NULL,
-    FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  PRIMARY KEY (`Employee_id`),
+    FOREIGN KEY (`Employee_id`) REFERENCES `Employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE)  
 
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ 
+ ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `username`, `password`, `type`) VALUES
-(1, 'Ayesh', 'ayesh123', 'Employee');
+INSERT INTO `user` (`Employee_id`, `username`, `password`, `type`,`dbname`,`dbpass`) VALUES
+(10001, 'Ayesh', 'ayesh123', 'Employee','root','');
 
 --
 -- Triggers `user`
@@ -474,7 +477,7 @@ ALTER TABLE `emergency_details`
 -- Indexes for table `employee`
 --
 ALTER TABLE `employee`
-  ADD PRIMARY KEY (`Employee_id`),
+  
   ADD KEY `Employee_Employee_Employee_id_fk` (`supervisor_emp_id`);
 
 --
@@ -530,10 +533,7 @@ ALTER TABLE `taken_no_of_leaves`
   ADD PRIMARY KEY (`Employee_id`);
 
 --
--- Indexes for table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`user_id`);
+
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -546,12 +546,7 @@ ALTER TABLE `organization`
   MODIFY `Reg_No` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `user`
---
-ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
---
 -- Constraints for dumped tables
 --
 
