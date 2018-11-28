@@ -36,3 +36,4 @@ GRANT EXECUTE ON PROCEDURE remaining_annual_leaves_procedure TO 'EMP'@'localhost
 GRANT EXECUTE ON PROCEDURE remaining_casual_leaves_procedure TO 'EMP'@'localhost';
 GRANT EXECUTE ON PROCEDURE remaining_maternity_leaves_procedure TO 'EMP'@'localhost';
 GRANT EXECUTE ON PROCEDURE remaining_no_pay_leaves_procedure TO 'EMP'@'localhost';
+GRANT EXECUTE ON PROCEDURE applyleave TO 'EMP'@'localhost';
