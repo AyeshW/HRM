@@ -27,6 +27,22 @@ $dbuser=$_POST["dbuser"];
 $dbpass=$_POST["dbpass"];
 $type=$_POST["type"];
 
+echo ($empID);
+echo ($fname);
+echo ($mname);
+echo ($lname);
+echo ($bod);
+echo ($marital);
+echo ($gender);
+echo ($supEmpID);
+echo ($empStatID);
+echo ($depID);
+echo ($jobID);
+
+echo ($dbuser);
+echo ($dbpass);
+echo ($type);
+
 
 if(isset($_POST["password"])){
     $pass=md5($_POST["password"]);
