@@ -772,6 +772,47 @@ END
 $$
 DELIMITER ;
 
+--procedure to approve leave--
+
+DELIMITER $$
+CREATE PROCEDURE approveLeave( IN given_Leave_id int(7),given_Employee_id varchar(7), given_Leave_Type enum('Annual','Casual','Maternity','No_pay') ,given_status enum('Approved','Rejected'))
+BEGIN
+DECLARE number int;
+start transaction;
+if given_status = 'Rejected' THEN
+UPDATE employee_leaves
+SET status=given_status WHERE Leave_id=given_Leave_id;
+
+elseif given_status = 'Approved' and given_Leave_Type = 'Annual' then
+UPDATE employee_leaves
+SET status=given_status WHERE Leave_id=given_Leave_id;
+SELECT Annual_count from taken_no_of_leaves WHERE Employee_id=given_Employee_id into number;
+UPDATE taken_no_of_leaves set Annual_count= number -1 where Employee_id=given_Employee_id;
+
+elseif given_status = 'Approved' and given_Leave_Type = 'Casual' then
+UPDATE employee_leaves
+SET status=given_status WHERE Leave_id=given_Leave_id;
+SELECT casual_count from taken_no_of_leaves WHERE Employee_id=given_Employee_id into number;
+UPDATE taken_no_of_leaves set Annual_count= number -1 where Employee_id=given_Employee_id;
+
+elseif given_status = 'Approved' and given_Leave_Type = 'Maternity' then
+UPDATE employee_leaves
+SET status=given_status WHERE Leave_id=given_Leave_id;
+SELECT maternity_count from taken_no_of_leaves WHERE Employee_id=given_Employee_id into number;
+UPDATE taken_no_of_leaves set maternity_count= number -1 where Employee_id=given_Employee_id;
+
+elseif given_status = 'Approved' and given_Leave_Type = 'No_pay' then
+UPDATE employee_leaves
+SET status=given_status WHERE Leave_id=given_Leave_id;
+SELECT no_pay_count from taken_no_of_leaves WHERE Employee_id=given_Employee_id into number;
+UPDATE taken_no_of_leaves set no_pay_count= number -1 where Employee_id=given_Employee_id;
+
+END if;
+commit;
+END
+$$
+DELIMITER ;
+
 
 
 --Functions--
