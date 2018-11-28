@@ -101,6 +101,7 @@ if($stmt = $conn->prepare($sql)) {
 <button onclick="window.location.href='../adminDashboard.html">Go to Home</button>
 }
 ?> -->*/
+
 $stmt = $conn->prepare('CALL addDepartment(
 ?,?,?,?)');
 

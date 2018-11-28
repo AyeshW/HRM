@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2018 at 10:58 PM
+-- Generation Time: Nov 28, 2018 at 11:24 PM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.0.30
 
@@ -21,6 +21,165 @@ SET time_zone = "+00:00";
 --
 -- Database: `edbms`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addDepartment` (IN `Department_ID` VARCHAR(7), `Department_Name` VARCHAR(20), `Building` VARCHAR(20), `Description` VARCHAR(100))  BEGIN
+
+INSERT INTO department (Department_ID,Department_Name,Building,Description) values (Department_ID,Department_Name,Building,Description);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addEmployee` (IN `Employee_id` VARCHAR(7), `username` VARCHAR(20), `password` VARCHAR(255), `type` ENUM('Admin','HRM','Employee'), `dbuser` VARCHAR(20), `dbpass` VARCHAR(255), `First_name` VARCHAR(20), `Middle_name` VARCHAR(20), `Last_name` VARCHAR(20), `birthday` DATE, `Marital_status` ENUM('Unmarried','Married'), `Gender` ENUM('Male','Female'), `supervisor_empid` VARCHAR(7), `Employement_status_id` VARCHAR(7), `department_id` VARCHAR(7), `job_id` VARCHAR(7))  BEGIN
+START TRANSACTION;
+IF username is null or password is null then
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+else
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+INSERT INTO user (Employee_id,username,password,type,dbname,dbpass) values (Employee_id,username,password,type,dbuser,dbpass);
+
+END IF;
+COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addEmploymentStatus` (IN `Status_ID` VARCHAR(7), `Status_name` VARCHAR(20))  BEGIN
+
+INSERT INTO employment_status (Status_ID,Status_name) values (Status_ID,Status_name);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addJobTitle` (IN `Job_ID` VARCHAR(7), `Job_Name` VARCHAR(20))  BEGIN
+
+INSERT INTO job_titile (Job_ID, Job_Name) values (Job_ID, Job_Name);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `applyLeave` (IN `Employee_id` VARCHAR(7), `start_date` DATE, `end_date` DATE, `Leave_Type` ENUM('Annual','Casual','Maternity','No_pay'), `reason` VARCHAR(20))  BEGIN
+INSERT INTO employee_leaves (Employee_id,start_date,end_date,Leave_Type,reason,status) VALUES (Employee_id,start_date,end_date,Leave_Type,reason,'Pending');
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeByDepartment` (IN `given_department_id` VARCHAR(7))  BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.department_id = given_department_id ;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeByJobTitle` (IN `given_job_title_id` VARCHAR(7))  BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.job_id = given_job_title_id ;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeByPayGrade` (IN `given_pay_grade_id` VARCHAR(7))  BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN payroll_info using(Employee_id) JOIN employementdetails using (Employee_id) JOIN department using (department_id) JOIN employment_status on employementdetails.Employement_status_id=employment_status.Status_ID JOIN job_titile on employementdetails.job_id=job_titile.Job_ID WHERE payroll_info.pay_grade_id = given_pay_grade_id ;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeByStatus` (IN `given_status_id` VARCHAR(7))  BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.Employement_status_id = given_status_id ;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEmergencyDetails` (IN `Employee_id` VARCHAR(7))  BEGIN
+
+SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee.Employee_id= Employee_id;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `remaining_annual_leaves_procedure` (IN `E_id` VARCHAR(7))  BEGIN
+
+select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select annual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `remaining_casual_leaves_procedure` (IN `E_id` VARCHAR(7))  BEGIN
+
+select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `remaining_maternity_leaves_procedure` (IN `E_id` VARCHAR(7))  BEGIN
+
+select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `remaining_no_pay_leaves_procedure` (IN `E_id` VARCHAR(7))  BEGIN
+
+select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `viewPersonalInfo` (IN `given_employee_id` VARCHAR(7))  BEGIN
+
+SELECT Employee_id,first_name,supervisor_emp_id,Department_Name,Job_Name,Status_name,pay_grade_id FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) JOIN payroll_info using (Employee_id) WHERE employementdetails.employee_id = given_employee_id ;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `viewTakenLeaveInfo` (IN `given_employee_id` VARCHAR(7))  BEGIN
+if (select gender from employee where employee_id=given_employee_id) ='Male'THEN
+
+SELECT Annual_count,casual_count,no_pay_count FROM taken_no_of_leaves WHERE taken_no_of_leaves.Employee_id=given_employee_id;
+
+else
+
+SELECT Annual_count,casual_count,maternity_count,no_pay_count FROM taken_no_of_leaves WHERE taken_no_of_leaves.Employee_id=given_employee_id;
+
+END IF;
+END$$
+
+--
+-- Functions
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `remaining_annual_leaves` (`E_id` VARCHAR(7)) RETURNS INT(11) BEGIN
+DECLARE annual int(11);
+set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+return annual;
+end$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `remaining_casual_leaves` (`E_id` VARCHAR(7)) RETURNS INT(11) BEGIN
+DECLARE casual int(11);
+set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+return casual;
+end$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `remaining_maternity_leaves` (`E_id` VARCHAR(7)) RETURNS INT(11) BEGIN
+DECLARE maternity int(11);
+set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)));
+return maternity;
+end$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `remaining_no_pay_leaves` (`E_id` VARCHAR(7)) RETURNS INT(11) BEGIN
+DECLARE no_pay int(11);
+set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)));
+return no_pay;
+end$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `address`
+--
+
+CREATE TABLE `address` (
+  `Employee_id` varchar(7) NOT NULL,
+  `po_box` int(10) DEFAULT NULL,
+  `street` varchar(20) NOT NULL,
+  `town` varchar(20) NOT NULL,
+  `country` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `address`
+--
+
+INSERT INTO `address` (`Employee_id`, `po_box`, `street`, `town`, `country`) VALUES
+('10002', 100, 'udugama street', 'Kalugamuwa', 'Sri lanka');
 
 -- --------------------------------------------------------
 
@@ -122,22 +281,6 @@ INSERT INTO `emergency_details` (`Employee_id`, `contact_no`, `Relationship`, `A
 ('10001', 774522654, 'Mother', '20/A, Piliyandala', 'Kamala');
 
 -- --------------------------------------------------------
--- Table structure for table `address`
---
-
-CREATE TABLE `Address` (
-  `Employee_id` varchar(7) PRIMARY KEY NOT NULL,
-  `po_box` int(10) ,
-  `street` varchar(20) NOT NULL,
-  `town` varchar(20) NOT NULL,
-  `country` varchar(20) NOT NULL
-  
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `address`
---
-INSERT INTO Address (Employee_id,po_box,street,town,country) values ('10002',100,'udugama street','Kalugamuwa','Sri lanka');
 
 --
 -- Table structure for table `employee`
@@ -151,8 +294,7 @@ CREATE TABLE `employee` (
   `birthday` date NOT NULL,
   `Marital_Status` enum('Unmarried','Married') NOT NULL,
   `Gender` enum('Male','Female') NOT NULL,
-  `supervisor_emp_id` varchar(7) DEFAULT NULL,
-  PRIMARY KEY (`Employee_id`)
+  `supervisor_emp_id` varchar(7) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -193,7 +335,7 @@ DELIMITER ;
 --
 
 CREATE TABLE `employee_leaves` (
-  `Leave_id` INT(7) primary key NOT NULL AUTO_INCREMENT,
+  `Leave_id` int(7) NOT NULL,
   `Employee_id` varchar(7) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
@@ -207,68 +349,92 @@ CREATE TABLE `employee_leaves` (
 --
 
 INSERT INTO `employee_leaves` (`Leave_id`, `Employee_id`, `start_date`, `end_date`, `Leave_Type`, `Reason`, `status`) VALUES
-('1', '10002', '2018-11-13', '2018-11-15', 'Casual', 'Sickness', 'Approved'),
-('2', '10001', '2018-11-02', '2018-11-02', 'Casual', 'Personal', 'Approved'),
-('3', '10002', '2018-11-08', '2018-11-08', 'Annual', 'Personal', 'Pending'),
-('4', '10002', '2018-11-01', '2018-11-01', 'No-pay', 'Sickness', 'Rejected');
+(1, '10002', '2018-11-13', '2018-11-15', 'Casual', 'Sickness', 'Approved'),
+(2, '10001', '2018-11-02', '2018-11-02', 'Casual', 'Personal', 'Approved'),
+(3, '10002', '2018-11-08', '2018-11-08', 'Annual', 'Personal', 'Pending'),
+(4, '10002', '2018-11-26', '2018-11-01', 'No-pay', 'Sickness', 'Rejected');
 
 --
 -- Triggers `employee_leaves`
 --
 DELIMITER $$
 CREATE TRIGGER `employee_leaves_validation` BEFORE INSERT ON `employee_leaves` FOR EACH ROW BEGIN
-    /*DECLARE gender ENUM("Male","Female");
-    SELECT Gender INTO gender FROM employee WHERE NEW.Employee_id = employee.Employee_id;
+         /*DECLARE gender ENUM("Male","Female");
+         SELECT Gender INTO gender FROM employee WHERE NEW.Employee_id = employee.Employee_id;
 
-    IF NEW.Leave_Type = "Maternity" AND gender = "Male" THEN
-      SIGNAL SQLSTATE VALUE '45005'
-        SET MESSAGE_TEXT = 'Maternity leaves are only for females';
-    end if;*/
+         IF NEW.Leave_Type = "Maternity" AND gender = "Male" THEN
+           SIGNAL SQLSTATE VALUE '45005'
+             SET MESSAGE_TEXT = 'Maternity leaves are only for females';
+         end if;*/
 
-    DECLARE grade VARCHAR(7);
-    DECLARE avail_annual int;
-    DECLARE avail_casual int;
-    DECLARE avail_maternity int;
-    DECLARE avail_nopay int;
-    DECLARE taken_annual_leaves int;
-    DECLARE taken_casual_leaves int;
-    DECLARE taken_maternity_leaves int;
-    DECLARE taken_nopay_leaves int;
+         DECLARE grade VARCHAR(7);
+         DECLARE avail_annual int;
+         DECLARE avail_casual int;
+         DECLARE avail_maternity int;
+         DECLARE avail_nopay int;
+         DECLARE taken_annual_leaves int;
+         DECLARE taken_casual_leaves int;
+         DECLARE taken_maternity_leaves int;
+         DECLARE taken_nopay_leaves int;
+         DECLARE applied_leaves int;
 
-    SELECT pay_grade_id INTO grade FROM payroll_info WHERE  NEW.Employee_id = payroll_info.Employee_id;
+         SET applied_leaves = DATEDIFF(NEW.end_date,NEW.start_date);
 
-    SELECT Annual_leaves INTO avail_annual FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
-    SELECT Annual_count INTO taken_annual_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+         IF NEW.end_date < NEW.start_date THEN
+           SIGNAL SQLSTATE VALUE '46001'
+             SET MESSAGE_TEXT = 'End date cannot be earlier than Start date';
+         end if;
 
-    IF NEW.Leave_Type = 'Annual' AND (avail_annual <= taken_annual_leaves) THEN
-      SIGNAL SQLSTATE VALUE '45006'
-        set  message_text = 'No more annual leaves are allowed';
-    end if;
+         SELECT pay_grade_id INTO grade FROM payroll_info WHERE  NEW.Employee_id = payroll_info.Employee_id;
 
-    SELECT Casual_leaves INTO avail_casual FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
-    SELECT casual_count INTO taken_casual_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+         SELECT Annual_leaves INTO avail_annual FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+         SELECT Annual_count INTO taken_annual_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
 
-    IF NEW.Leave_Type = 'Casual' AND (avail_casual <= taken_casual_leaves) THEN
-      SIGNAL SQLSTATE VALUE '45007'
-        set  message_text = 'No more casual leaves are allowed';
-    end if;
+         IF NEW.Leave_Type = 'Annual' AND (avail_annual <= taken_annual_leaves) THEN
+           SIGNAL SQLSTATE VALUE '45006'
+             set  message_text = 'No more annual leaves are allowed';
+         end if;
+         IF NEW.Leave_Type = 'Annual' AND ((avail_annual-taken_annual_leaves) < applied_leaves) THEN
+           SIGNAL SQLSTATE VALUE '46002'
+             set  message_text = 'Number of leaves applied cannot be accepted';
+         end if;
 
-    SELECT Maternity_leaves INTO avail_maternity FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
-    SELECT maternity_count INTO taken_maternity_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+         SELECT Casual_leaves INTO avail_casual FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+         SELECT casual_count INTO taken_casual_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
 
-    IF NEW.Leave_Type = 'Maternity' AND (avail_maternity <= taken_maternity_leaves) THEN
-      SIGNAL SQLSTATE VALUE '45008'
-        set  message_text = 'No more maternity leaves are allowed';
-    end if;
+         IF NEW.Leave_Type = 'Casual' AND (avail_casual <= taken_casual_leaves) THEN
+           SIGNAL SQLSTATE VALUE '45007'
+             set  message_text = 'No more casual leaves are allowed';
+         end if;
+         IF NEW.Leave_Type = 'Casual' AND ((avail_casual-taken_casual_leaves) < applied_leaves) THEN
+           SIGNAL SQLSTATE VALUE '46002'
+             set  message_text = 'Number of leaves applied cannot be accepted';
+         end if;
 
-    SELECT No_pay_leaves INTO avail_nopay FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
-    SELECT no_pay_count INTO taken_nopay_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+         SELECT Maternity_leaves INTO avail_maternity FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+         SELECT maternity_count INTO taken_maternity_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
 
-    IF NEW.Leave_Type = 'No-pay' AND (avail_nopay <= taken_nopay_leaves) THEN
-      SIGNAL SQLSTATE VALUE '45009'
-        set  message_text = 'No more no-pay leaves are allowed';
-    end if;
-  END
+         IF NEW.Leave_Type = 'Maternity' AND (avail_maternity <= taken_maternity_leaves) THEN
+           SIGNAL SQLSTATE VALUE '45008'
+             set  message_text = 'No more maternity leaves are allowed';
+         end if;
+         IF NEW.Leave_Type = 'Maternity' AND ((avail_maternity-taken_maternity_leaves) < applied_leaves) THEN
+           SIGNAL SQLSTATE VALUE '46003'
+             set  message_text = 'Number of leaves applied cannot be accepted';
+         end if;
+
+         SELECT No_pay_leaves INTO avail_nopay FROM pay_grade WHERE grade = pay_grade.pay_grade_id;
+         SELECT no_pay_count INTO taken_nopay_leaves FROM taken_no_of_leaves WHERE NEW.Employee_id = taken_no_of_leaves.Employee_id;
+
+         IF NEW.Leave_Type = 'No-pay' AND (avail_nopay <= taken_nopay_leaves) THEN
+           SIGNAL SQLSTATE VALUE '45009'
+             set  message_text = 'No more no-pay leaves are allowed';
+         end if;
+         IF NEW.Leave_Type = 'No-pay' AND ((avail_nopay-taken_nopay_leaves) < applied_leaves) THEN
+           SIGNAL SQLSTATE VALUE '46004'
+             set  message_text = 'Number of leaves applied cannot be accepted';
+         end if;
+       END
 $$
 DELIMITER ;
 
@@ -423,7 +589,7 @@ INSERT INTO `taken_no_of_leaves` (`Employee_id`, `Annual_count`, `casual_count`,
 ('10001', 0, 1, 0, 0),
 ('10002', 1, 3, 0, 1),
 ('10003', 0, 0, 0, 0),
-('10004', 0, 7, 0, 0);
+('10004', 0, 8, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -437,19 +603,17 @@ CREATE TABLE `user` (
   `password` varchar(255) DEFAULT NULL,
   `dbname` varchar(20) NOT NULL,
   `dbpass` varchar(255) NOT NULL,
-  `type` enum('Admin','HRM','Employee') NOT NULL,
-  PRIMARY KEY (`Employee_id`),
-    FOREIGN KEY (`Employee_id`) REFERENCES `Employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE)  
-
- 
- ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `type` enum('Admin','HRM','Employee') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user`
 --
 
+
 INSERT INTO `user` (`Employee_id`, `username`, `password`, `type`,`dbname`,`dbpass`) VALUES
 (10001, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin','root',''),(10002, 'emp', '21232f297a57a5a743894a0e4a801fc3', 'Employee','root',''),(10003, 'emp', '21232f297a57a5a743894a0e4a801fc3', 'HRM','root','');
+
 
 --
 -- Triggers `user`
@@ -472,6 +636,12 @@ DELIMITER ;
 --
 
 --
+-- Indexes for table `address`
+--
+ALTER TABLE `address`
+  ADD PRIMARY KEY (`Employee_id`);
+
+--
 -- Indexes for table `department`
 --
 ALTER TABLE `department`
@@ -489,14 +659,19 @@ ALTER TABLE `dependent_info`
 ALTER TABLE `emergency_details`
   ADD PRIMARY KEY (`Employee_id`,`name`);
 
-  
 --
 -- Indexes for table `employee`
 --
 ALTER TABLE `employee`
-  
+  ADD PRIMARY KEY (`Employee_id`),
   ADD KEY `Employee_Employee_Employee_id_fk` (`supervisor_emp_id`);
 
+--
+-- Indexes for table `employee_leaves`
+--
+ALTER TABLE `employee_leaves`
+  ADD PRIMARY KEY (`Leave_id`),
+  ADD KEY `Employee_id` (`Employee_id`);
 
 --
 -- Indexes for table `employementdetails`
@@ -545,11 +720,20 @@ ALTER TABLE `taken_no_of_leaves`
   ADD PRIMARY KEY (`Employee_id`);
 
 --
-
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`Employee_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `employee_leaves`
+--
+ALTER TABLE `employee_leaves`
+  MODIFY `Leave_id` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `organization`
@@ -558,20 +742,20 @@ ALTER TABLE `organization`
   MODIFY `Reg_No` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
-
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `address`
+--
+ALTER TABLE `address`
+  ADD CONSTRAINT `Address_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `dependent_info`
 --
 ALTER TABLE `dependent_info`
   ADD CONSTRAINT `Dependent_info_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
---
--- Constraints for table `Address`
---
-ALTER TABLE `Address`
-  ADD CONSTRAINT `Address_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `employee`
@@ -583,7 +767,7 @@ ALTER TABLE `employee`
 -- Constraints for table `employee_leaves`
 --
 ALTER TABLE `employee_leaves`
-   add FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `employee_leaves_ibfk_1` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `employementdetails`
@@ -606,6 +790,12 @@ ALTER TABLE `payroll_info`
 --
 ALTER TABLE `taken_no_of_leaves`
   ADD CONSTRAINT `Taken_no_of_leaves_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
@@ -877,7 +1067,7 @@ SELECT Employee_id,first_name,supervisor_emp_id,Department_Name,Job_Name,Status_
 
 END $$
 
-DELIMITER ;
+DELIMITER ; */
 
 /* Procedure for viewing personal information 
 
