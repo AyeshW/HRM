@@ -6,6 +6,7 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+<<<<<<< HEAD:php/employeeRemainingLeaves.php
 $dbuser = $_SESSION["dbuser"];
 $dbpass = $_SESSION["dbpass"];
 $con = Opencon($dbuser,$dbpass);
@@ -15,6 +16,12 @@ $con = Opencon($dbuser,$dbpass);
 $empID="10001";
 
 
+=======
+#$empID= $_SESSION['Employee_id'];
+$empID="10001";
+$conn = OpenCon("root","");
+
+>>>>>>> 7b72d9c315a6f24333f8327f8f1bdaf0a0870649:php/employeeRemainingLeaves.php
 $stmt = $conn->prepare("SELECT remaining_annual_leaves(?)");
 $stmt->bind_param('s',$empID);
 $stmt->execute();

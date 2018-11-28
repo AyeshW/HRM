@@ -6,6 +6,7 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+<<<<<<< HEAD
 $dbuser=$_SESSION["dbuser"];
 $dbpass = $_SESSION["dbpass"];
 $con = Opencon($dbuser,$dbpass);
@@ -14,6 +15,11 @@ $con = Opencon($dbuser,$dbpass);
 $empID=$_SESSION['Employee_id'];
 
 
+=======
+$empID=$_SESSION['Employee_id'];
+$conn = OpenCon("root","");
+
+>>>>>>> 7b72d9c315a6f24333f8327f8f1bdaf0a0870649
 $stmt = $conn->prepare('CALL viewEmployeeInfo(?)');
 $stmt->bind_param('s',$empID);
 $stmt->execute();
