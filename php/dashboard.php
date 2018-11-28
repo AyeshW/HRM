@@ -3,9 +3,9 @@
     $userType = $_SESSION["usertype"];
     if($userType == 'Admin'){
         header("location:../adminDashboard.html");
-    }elseif($userType = 'HRM'){
+    }elseif($userType == 'HRM'){
         header("location:../HRMDashboard.html");
-    }elseif($userType = 'Employee'){
-        header("location:../EmployeeDashboard");
+    }elseif($userType == 'Employee'){
+        header("location:../EmployeeDashboard.html");
     }
 ?>

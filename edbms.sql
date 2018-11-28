@@ -437,7 +437,7 @@ CREATE TABLE `user` (
   `password` varchar(255) DEFAULT NULL,
   `dbname` varchar(20) NOT NULL,
   `dbpass` varchar(255) NOT NULL,
-  `type` enum('HRM','Employee') NOT NULL,
+  `type` enum('Admin','HRM','Employee') NOT NULL,
   PRIMARY KEY (`Employee_id`),
     FOREIGN KEY (`Employee_id`) REFERENCES `Employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE)  
 
@@ -699,7 +699,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
+CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('Admin','HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
 
 BEGIN
 START TRANSACTION;
@@ -760,6 +760,18 @@ END $$
 
 DELIMITER ;
 
+--procedure to submit leave application form--
+
+
+delimiter $$ 
+CREATE PROCEDURE applyLeave(IN Employee_id varchar(7),start_date date, end_date date,Leave_Type enum('Annual','Casual','Maternity','No_pay'),reason varchar(20))
+
+BEGIN
+INSERT INTO employee_leaves (Employee_id,start_date,end_date,Leave_Type,reason,status) VALUES (Employee_id,start_date,end_date,Leave_Type,reason,'Pending');
+END 
+$$
+DELIMITER ;
+
 
 
 --Functions--
@@ -808,6 +820,49 @@ end
 $$
 delimiter ;
 
+--procedures for getting remaining leave counts by employee_id--
+
+delimiter $$
+create PROCEDURE remaining_no_pay_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+delimiter $$
+create PROCEDURE remaining_casual_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+
+delimiter $$
+create PROCEDURE remaining_annual_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select annual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+delimiter $$
+create PROCEDURE remaining_maternity_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
 /* Procedure for viewing personal information */
 
 DELIMITER $$
@@ -845,4 +900,3 @@ END IF;
 END $$
 
 DELIMITER ;
-

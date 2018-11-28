@@ -6,9 +6,14 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+$dbuser = $_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$con = Opencon($dbuser,$dbpass);
+
+
 #$empID= $_SESSION['Employee_id'];
 $empID="10001";
-$conn = OpenCon("root","");
+
 
 $stmt = $conn->prepare('CALL remaining_annual_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
