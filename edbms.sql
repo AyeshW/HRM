@@ -126,20 +126,19 @@ INSERT INTO `emergency_details` (`Employee_id`, `contact_no`, `Relationship`, `A
 --
 
 CREATE TABLE `Address` (
-  `Employee_id` varchar(7) NOT NULL,
+  `Employee_id` varchar(7) PRIMARY KEY NOT NULL,
   `po_box` int(10) ,
   `street` varchar(20) NOT NULL,
   `town` varchar(20) NOT NULL,
-  `country` varchar(20) NOT NULL,
-  PRIMARY KEY (Employee_id),
-  FOREIGN KEY (Employee_id) REFERENCES Employee(Employee_id) on DELETE CASCADE on UPDATE CASCADE
+  `country` varchar(20) NOT NULL
+  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `address`
 --
 INSERT INTO Address (Employee_id,po_box,street,town,country) values ('10002',100,'udugama street','Kalugamuwa','Sri lanka');
---------------------------------------------------------------
+
 --
 -- Table structure for table `employee`
 --
@@ -490,6 +489,7 @@ ALTER TABLE `dependent_info`
 ALTER TABLE `emergency_details`
   ADD PRIMARY KEY (`Employee_id`,`name`);
 
+  
 --
 -- Indexes for table `employee`
 --
@@ -572,6 +572,11 @@ ALTER TABLE `organization`
 --
 ALTER TABLE `dependent_info`
   ADD CONSTRAINT `Dependent_info_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+--
+-- Constraints for table `Address`
+--
+ALTER TABLE `Address`
+  ADD CONSTRAINT `Address_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `employee`
@@ -623,7 +628,7 @@ DELIMITER ;
 
 
 \
-/* Function for selecting employee on pay grade */
+/* Function for selecting employee on Job Title */
 
 DELIMITER $$
 
