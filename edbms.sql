@@ -628,7 +628,7 @@ DELIMITER ;
 
 
 \
-/* Function for selecting employee on pay grade */
+/* Function for selecting employee on Job Title */
 
 DELIMITER $$
 
