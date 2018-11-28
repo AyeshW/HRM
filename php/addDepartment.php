@@ -20,7 +20,10 @@ $dbname='edbms';
 $username='root';
 $password='';
 
-
+$deptId = $_POST['departmentid'];
+$deptName = $_POST['departmentname'];
+$building = $_POST['building'];
+$description = $_POST['description'];
 /*if(isset($_POST["department"]) && isset($_POST["building"])&&isset($_POST["description"])&&isset($_POST["departmentid"])){
     $deptId = $_POST['departmentid'];
     $deptName = $_POST['departmentname'];
@@ -45,16 +48,13 @@ $password='';
         die("Error occurred:" . $e->getMessage());
     }
 }*/
-$conditionSet = isset($_POST["department"]) && isset($_POST["building"])&&isset($_POST["description"])&&isset($_POST["departmentid"]);
-if($conditionSet){
-    $deptId = $_POST['departmentid'];
-    $deptName = $_POST['departmentname'];
-    $building = $_POST['building'];
-    $description = $_POST['description'];
-}else{
-    $deptId = $deptName=$building = $description  = null;
+
+/*$sql = "INSERT INTO department(Department_ID,Department_Name, Building, Description) VALUES(?,?,?,?)";
+if($stmt = $conn->prepare($sql)) {
+    $stmt->bind_param('ssss',$deptId,$deptName,$building, $description);
+    $stmt->execute();
     ?>
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -65,43 +65,32 @@ if($conditionSet){
     <script src="main.js"></script>
 </head>
 <body>
-<h2>Department Adding Failed</h2>
+<h2>Department Succesfully Added</h2>
 <button href="../adminDashboard.html">Go to Home</button>
 </body>
 </html>
 <?php
-}
-//$sql = 'CALL addDepartment(?,?,?,?)';
-$sql = "INSERT INTO department(Department_ID,Department_Name, Building, Description) VALUES(?,?,?,?)";
-if($stmt = $conn->prepare($sql)) {
-    $stmt->bind_param('ssss',$deptId,$deptName,$building, $description);
-    $stmt->execute();
-    if($conditionSet) {
 
-        ?>
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8"/>
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <title>Admin</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" type="text/css" media="screen" href="main.css"/>
-            <script src="main.js"></script>
-        </head>
-        <body>
-        <h2>Department Succesfully Added</h2>
-        <button href="../adminDashboard.html">Go to Home</button>
-        </body>
-        </html>
-        <?php
-    }
 } else {
     $error = $conn->errno . ' ' . $conn->error;
     ?>
-
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+<h2>Department Succesfully Added</h2>
+<button href="../adminDashboard.html">Go to Home</button>
+</body>
+</html>
 <?php
-    //echo $error;
+    echo $error;
 }
 
 ?>
@@ -111,5 +100,32 @@ if($stmt = $conn->prepare($sql)) {
     header('location:../adminDashboard.html');
 <button onclick="window.location.href='../adminDashboard.html">Go to Home</button>
 }
-?> -->
+?> -->*/
+$stmt = $conn->prepare('CALL addDepartment(
+?,?,?,?)');
+
+$stmt->bind_param('ssss',$deptId,$deptName,$building,$description);
+$stmt->execute();
+$allData = $stmt->get_result();
+
+CloseCon($conn);
+
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>User Added</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+<h2>Department Succesfully Added</h2>
+<button href="../index.html">Go to Home</button>
+</body>
+</html>
 
