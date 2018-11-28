@@ -806,3 +806,41 @@ return no_pay;
 end
 $$
 delimiter ;
+
+/* Procedure for viewing personal information */
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS viewPersonalInfo$$
+
+CREATE PROCEDURE viewPersonalInfo(IN given_employee_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,supervisor_emp_id,Department_Name,Job_Name,Status_name,pay_grade_id FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) JOIN payroll_info using (Employee_id) WHERE employementdetails.employee_id = given_employee_id ;
+
+END $$
+
+DELIMITER ;
+
+/* Procedure for viewing personal information */
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS viewTakenLeaveInfo$$
+
+CREATE PROCEDURE viewTakenLeaveInfo(IN given_employee_id VARCHAR(7))
+
+BEGIN
+if (select gender from employee where employee_id=given_employee_id) ='Male'THEN
+
+SELECT Annual_count,casual_count,no_pay_count FROM taken_no_of_leaves WHERE taken_no_of_leaves.Employee_id=given_employee_id;
+
+else
+
+SELECT Annual_count,casual_count,maternity_count,no_pay_count FROM taken_no_of_leaves WHERE taken_no_of_leaves.Employee_id=given_employee_id;
+
+END IF;
+END $$
+
+DELIMITER ;
