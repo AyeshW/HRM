@@ -6,10 +6,11 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+$empID=$_SESSION['Employee_id'];
+$conn = OpenCon("root","");
 
-$conn = OpenCon();
-
-$stmt = $conn->prepare("SELECT * FROM all_employee_data_for_admin");
+$stmt = $conn->prepare('CALL viewEmployeeInfo(?)');
+$stmt->bind_param('s',$empID);
 $stmt->execute();
 $allData = $stmt->get_result();
 
@@ -29,7 +30,7 @@ CloseCon($conn);
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <title>DBMS</title>
+    <title>Employee Details</title>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
