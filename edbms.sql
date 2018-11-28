@@ -437,7 +437,7 @@ CREATE TABLE `user` (
   `password` varchar(255) DEFAULT NULL,
   `dbname` varchar(20) NOT NULL,
   `dbpass` varchar(255) NOT NULL,
-  `type` enum('HRM','Employee') NOT NULL,
+  `type` enum('Admin','HRM','Employee') NOT NULL,
   PRIMARY KEY (`Employee_id`),
     FOREIGN KEY (`Employee_id`) REFERENCES `Employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE)  
 
@@ -699,7 +699,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
+CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('Admin','HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
 
 BEGIN
 START TRANSACTION;
@@ -758,6 +758,18 @@ BEGIN
 INSERT INTO employment_status (Status_ID,Status_name) values (Status_ID,Status_name);
 END $$
 
+DELIMITER ;
+
+--procedure to submit leave application form--
+
+
+delimiter $$ 
+CREATE PROCEDURE applyLeave(IN Employee_id varchar(7),start_date date, end_date date,Leave_Type enum('Annual','Casual','Maternity','No_pay'),reason varchar(20))
+
+BEGIN
+INSERT INTO employee_leaves (Employee_id,start_date,end_date,Leave_Type,reason,status) VALUES (Employee_id,start_date,end_date,Leave_Type,reason,'Pending');
+END 
+$$
 DELIMITER ;
 
 
@@ -845,4 +857,6 @@ END IF;
 END $$
 
 DELIMITER ;
+
+
 
