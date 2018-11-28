@@ -605,6 +605,8 @@ END $$
 
 DELIMITER ;
 
+
+\
 /* Function for selecting employee on pay grade */
 
 DELIMITER $$
@@ -618,6 +620,7 @@ SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Depart
 END $$
 
 DELIMITER ;
+
 
 
 /* Function for selecting employee on employement status*/
@@ -635,6 +638,7 @@ END $$
 DELIMITER ;
 
 
+
 /* Function for selecting employee on department */
 
 DELIMITER $$
@@ -650,6 +654,58 @@ SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Depart
 END $$
 
 DELIMITER ;
+
+
+
+--Functions--
+delimiter $$
+create FUNCTION remaining_casual_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE casual int(11);
+set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+return casual;
+end
+$$
+delimiter ;
+
+
+delimiter $$
+create FUNCTION remaining_annual_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE annual int(11);
+set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+return annual;
+end
+$$
+delimiter ;
+
+delimiter $$
+create FUNCTION remaining_maternity_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE maternity int(11);
+set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)));
+return maternity;
+end
+$$
+delimiter ;
+
+delimiter $$
+create FUNCTION remaining_no_pay_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE no_pay int(11);
+set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)));
+return no_pay;
+end
+$$
+delimiter ;
+
+
+--End of functions--
+
 
 CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
 
