@@ -857,6 +857,3 @@ END IF;
 END $$
 
 DELIMITER ;
-
-
-
