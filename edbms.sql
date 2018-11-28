@@ -708,6 +708,51 @@ END IF;
 COMMIT;
 END $$
 
+--procedure for add new departments to department table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addDepartment$$
+
+CREATE PROCEDURE addDepartment(IN Department_ID VARCHAR(7),Department_Name varchar(20),Building varchar(20),Description varchar(100))
+
+BEGIN
+
+INSERT INTO department (Department_ID,Department_Name,Building,Description) values (Department_ID,Department_Name,Building,Description);
+END $$
+
+DELIMITER ;
+
+--procedure for add new Job titles to job_titiles table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addJobTitle$$
+
+CREATE PROCEDURE addJobTitle(IN Job_ID varchar(7), Job_Name varchar(20))
+
+BEGIN
+
+INSERT INTO job_titile (Job_ID, Job_Name) values (Job_ID, Job_Name);
+END $$
+
+DELIMITER ;
+
+--procedure to add new employment status to employment_status table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addEmploymentStatus$$
+
+CREATE PROCEDURE addEmploymentStatus(IN Status_ID varchar(7), Status_name varchar(20))
+
+BEGIN
+
+INSERT INTO employment_status (Status_ID,Status_name) values (Status_ID,Status_name);
+END $$
+
+DELIMITER ;
+
 
 
 --Functions--
