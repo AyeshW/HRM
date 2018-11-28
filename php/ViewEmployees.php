@@ -4,7 +4,7 @@
     session_start();
     $dbuser=$_SESSION["dbuser"];
     $dbpass = $_SESSION["dbpass"];
-    $con = Opencon($dbuser,$dbpass);
+    $conn = Opencon($dbuser,$dbpass);
     
     $sql="SELECT * FROM employee";
     $results = $con->query($sql);
@@ -12,6 +12,7 @@
     while($row = mysqli_fetch_assoc($results)){
         $array[]=$row;
     }
+    CloseCon($conn);
 ?>
 
 

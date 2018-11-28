@@ -8,7 +8,9 @@ include '../config/db_connection.php';
 
 $dbuser=$_SESSION["dbuser"];
 $dbpass = $_SESSION["dbpass"];
-$conn = Opencon("$dbuser",$dbpass);
+
+$conn = Opencon($dbuser,$dbpass);
+
 
 
 //$empID=$_SESSION['Employee_id'];
