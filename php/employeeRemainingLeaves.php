@@ -1,4 +1,8 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 if (!$_SESSION['loggedin']){ 
     header("Location:../index.html");
@@ -6,20 +10,74 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+$dbuser = $_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$conn = Opencon($dbuser,$dbpass);
 
-$conn = OpenCon();
-$stmt = $conn->prepare("SELECT Department_Name FROM department");
+
+#$empID= $_SESSION['Employee_id'];
+$empID="10001";
+
+
+
+$stmt = $conn->prepare('CALL remaining_annual_leaves_procedure(?)');
+$stmt->bind_param('s',$empID);
 $stmt->execute();
-$department = $stmt->get_result();
 
-$depList = array();
+$remAnnual = $stmt->get_result();
 
-while($dep = mysqli_fetch_assoc($department)){
-    array_push($depList,$dep["Department_Name"]);
+$array = array();
+while($row = mysqli_fetch_assoc($remAnnual)){
+    $array[] = $row;
 }
+$remAnnual=$array[0]['number'];
 
 
+$stmt->close();
 
+
+if($stmt = $conn->prepare('CALL remaining_casual_leaves_procedure(?)')){
+$stmt->bind_param('s',$empID);
+$stmt->execute();
+}
+$remCasual = $stmt->get_result();
+
+$array = array();
+while($row = mysqli_fetch_assoc($remCasual)){
+    $array[] = $row;
+}
+$remCasual=$array[0]['number'];
+
+$stmt->close();
+
+
+$stmt = $conn->prepare('CALL remaining_maternity_leaves_procedure(?)');
+$stmt->bind_param('s',$empID);
+$stmt->execute();
+
+$remMaternity = $stmt->get_result();
+
+$array = array();
+while($row = mysqli_fetch_assoc($remMaternity)){
+    $array[] = $row;
+}
+$remMaternity=$array[0]['number'];
+
+$stmt->close();
+
+$stmt = $conn->prepare('CALL remaining_no_pay_leaves_procedure(?)');
+$stmt->bind_param('s',$empID);
+$stmt->execute();
+
+$remNoPay = $stmt->get_result();
+
+$array = array();
+while($row = mysqli_fetch_assoc($remNoPay)){
+    $array[] = $row;
+}
+$remNoPay=$array[0]['number'];
+
+$stmt->close();
 
 CloseCon($conn);
 
@@ -29,7 +87,7 @@ CloseCon($conn);
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <title>DBMS</title>
+    <title>Remaining Leaves</title>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,55 +114,27 @@ CloseCon($conn);
 <body>
     <div class="container">
         <br><br>
-        
-        <?php 
-        foreach($depList as $depName){ 
-        ?>
-
-        <h2><?php echo $depName ?></h2>
-
-        <?php
-            $conn = OpenCon();
-
-            $stmt = $conn->prepare("SELECT * FROM employees_department WHERE Department_Name = ? ");
-            $stmt->bind_param('s', $depName);
-            //$que = "SELECT * FROM employees_department WHERE Department_Name ='Computer Science'";
-        
-            $stmt->execute();
-            $res = $stmt->get_result()->fetch_all();
-            CloseCon($conn);
-            $count=count($res);
-            if($count == 0){
-                echo "<h4> &nbsp;&nbsp;&nbsp;&nbsp; No any Employee </h4> <br> ";
-            }
-            foreach($res as $detail){
-        ?>
         <table class="table">
         <thead>
             <tr>
-            <th scope="col">Employee ID</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Supervisor ID</th>
-            <th scope="col">Job Role</th>
-            <th scope="col">Department Name</th>
-            <th scope="col">Employee Status</th>
-
+            <th scope="col">Remaining Annual Leaves</th>
+            <th scope="col">Remaining Casual Leave</th>
+            <th scope="col">Remaining Maternity Leave</th>
+            <th scope="col">Remaining No Pay Leave</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-            <?php
-            foreach($detail as $data){
-                echo "<td>",$data,"</td>";
-            }
-            ?>
+            <td><?php echo($remAnnual); ?></td>
+            <td><?php echo($remCasual); ?></td>
+            <td><?php echo($remMaternity); ?></td>
+            <td><?php echo($remNoPay); ?></td>
             
             </tr>
-              <?php } ?>
+              
         </tbody>
         </table>
-            <?php } ?>
+            
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

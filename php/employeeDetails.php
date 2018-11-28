@@ -6,10 +6,19 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+$dbuser=$_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
 
-$conn = OpenCon();
 
-$stmt = $conn->prepare("SELECT * FROM all_employee_data_for_admin");
+$conn = Opencon($dbuser,$dbpass);
+
+
+
+//$empID=$_SESSION['Employee_id'];
+$empID=$_SESSION["Employee_id"];
+
+$stmt = $conn->prepare('SELECT * FROM all_employee_data_for_admin where employee_id = ?');
+$stmt->bind_param('s',$empID);
 $stmt->execute();
 $allData = $stmt->get_result();
 
@@ -29,29 +38,7 @@ CloseCon($conn);
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <title>DBMS</title>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Features</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    <title>Employee Details</title>
 </head>
 <body>
     <div class="container">
@@ -66,6 +53,7 @@ CloseCon($conn);
             <th scope="col">Job Role</th>
             <th scope="col">Department Name</th>
             <th scope="col">Employee Status</th>
+            <th scope="col">E P F Number</th>
 
             </tr>
         </thead>
@@ -81,6 +69,7 @@ CloseCon($conn);
             <td><?php echo $details["Job_Name"]; ?></td>
             <td><?php echo $details["Department_Name"]; ?></td>
             <td><?php echo $details["Status_name"]; ?></td>
+            <td><?php echo $details["epf_no"]; ?></td>
             </tr>
               <?php } ?>
         </tbody>

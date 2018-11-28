@@ -7,8 +7,9 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-
-$conn = OpenCon("root","");
+$dbuser = $_SESSION["dbuser"];
+$dbpass = $_SESSION["dbpass"];
+$conn = OpenCon($dbuser,$dbpass);
 
 $empID=$_POST["empID"];
 $fname=$_POST["fname"];
@@ -25,6 +26,22 @@ $jobID=$_POST["jobID"];
 $dbuser=$_POST["dbuser"];
 $dbpass=$_POST["dbpass"];
 $type=$_POST["type"];
+
+echo ($empID);
+echo ($fname);
+echo ($mname);
+echo ($lname);
+echo ($bod);
+echo ($marital);
+echo ($gender);
+echo ($supEmpID);
+echo ($empStatID);
+echo ($depID);
+echo ($jobID);
+
+echo ($dbuser);
+echo ($dbpass);
+echo ($type);
 
 
 if(isset($_POST["password"])){
