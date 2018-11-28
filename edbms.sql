@@ -671,7 +671,26 @@ END $$
 
 DELIMITER ;
 
+--procedure for getting user details by user id--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS getEmergencyDetails$$
+
+CREATE PROCEDURE getEmergencyDetails(IN Employee_id VARCHAR(7))
+
+BEGIN
+
+SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee_id= Employee_id;
+
+END $$
+
+DELIMITER ;
+
+
+
 --addEmployee procedure--
+
 DELIMITER $$
 
 CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
