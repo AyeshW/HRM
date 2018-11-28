@@ -122,6 +122,22 @@ INSERT INTO `emergency_details` (`Employee_id`, `contact_no`, `Relationship`, `A
 ('10001', 774522654, 'Mother', '20/A, Piliyandala', 'Kamala');
 
 -- --------------------------------------------------------
+-- Table structure for table `address`
+--
+
+CREATE TABLE `Address` (
+  `Employee_id` varchar(7) PRIMARY KEY NOT NULL,
+  `po_box` int(10) ,
+  `street` varchar(20) NOT NULL,
+  `town` varchar(20) NOT NULL,
+  `country` varchar(20) NOT NULL
+  
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `address`
+--
+INSERT INTO Address (Employee_id,po_box,street,town,country) values ('10002',100,'udugama street','Kalugamuwa','Sri lanka');
 
 --
 -- Table structure for table `employee`
@@ -473,6 +489,7 @@ ALTER TABLE `dependent_info`
 ALTER TABLE `emergency_details`
   ADD PRIMARY KEY (`Employee_id`,`name`);
 
+  
 --
 -- Indexes for table `employee`
 --
@@ -555,6 +572,11 @@ ALTER TABLE `organization`
 --
 ALTER TABLE `dependent_info`
   ADD CONSTRAINT `Dependent_info_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+--
+-- Constraints for table `Address`
+--
+ALTER TABLE `Address`
+  ADD CONSTRAINT `Address_employee_Employee_id_fk` FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `employee`
@@ -654,6 +676,88 @@ END $$
 
 DELIMITER ;
 
+--procedure for getting user details by user id--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS getEmergencyDetails$$
+
+CREATE PROCEDURE getEmergencyDetails(IN Employee_id VARCHAR(7))
+
+BEGIN
+
+SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee_id= Employee_id;
+
+END $$
+
+DELIMITER ;
+
+
+
+--addEmployee procedure--
+
+DELIMITER $$
+
+CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
+
+BEGIN
+START TRANSACTION;
+IF username is null or password is null then
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+else
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+INSERT INTO user (Employee_id,username,password,type,dbname,dbpass) values (Employee_id,username,password,type,dbuser,dbpass);
+END IF;
+COMMIT;
+END $$
+
+--procedure for add new departments to department table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addDepartment$$
+
+CREATE PROCEDURE addDepartment(IN Department_ID VARCHAR(7),Department_Name varchar(20),Building varchar(20),Description varchar(100))
+
+BEGIN
+
+INSERT INTO department (Department_ID,Department_Name,Building,Description) values (Department_ID,Department_Name,Building,Description);
+END $$
+
+DELIMITER ;
+
+--procedure for add new Job titles to job_titiles table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addJobTitle$$
+
+CREATE PROCEDURE addJobTitle(IN Job_ID varchar(7), Job_Name varchar(20))
+
+BEGIN
+
+INSERT INTO job_titile (Job_ID, Job_Name) values (Job_ID, Job_Name);
+END $$
+
+DELIMITER ;
+
+--procedure to add new employment status to employment_status table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addEmploymentStatus$$
+
+CREATE PROCEDURE addEmploymentStatus(IN Status_ID varchar(7), Status_name varchar(20))
+
+BEGIN
+
+INSERT INTO employment_status (Status_ID,Status_name) values (Status_ID,Status_name);
+END $$
+
+DELIMITER ;
+
 
 
 --Functions--
@@ -701,18 +805,3 @@ return no_pay;
 end
 $$
 delimiter ;
-
-
---End of functions--
-
-
-CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
-
-GRANT ALL PRIVILEGES ON hrm.* TO 'kalana'@'localhost';
-
-/*Create indexes for employee table and emergency details*/
-
-CREATE UNIQUE INDEX employeeIndex ON employee(Employee_id);
-
-CREATE UNIQUE INDEX emergencyIndex ON emergency_details(Employee_id);
-
