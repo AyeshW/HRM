@@ -8,11 +8,11 @@ include '../config/db_connection.php';
 
 $dbuser=$_SESSION["dbuser"];
 $dbpass = $_SESSION["dbpass"];
-$con = Opencon($dbuser,$dbpass);
+$conn = Opencon("root","");
 
 
-$empID=$_SESSION['Employee_id'];
-
+//$empID=$_SESSION['Employee_id'];
+$empID="10001";
 
 $stmt = $conn->prepare('CALL viewEmployeeInfo(?)');
 $stmt->bind_param('s',$empID);
