@@ -659,3 +659,13 @@ DELIMITER ;
 
 CALL employeeByDepartment('100');
 
+CREATE USER 'kalana'@'localhost' IDENTIFIED BY '123';
+
+GRANT ALL PRIVILEGES ON hrm.* TO 'kalana'@'localhost';
+
+/*Create indexes for employee table and emergency details*/
+
+CREATE UNIQUE INDEX employeeIndex ON employee(Employee_id);
+
+CREATE UNIQUE INDEX emergencyIndex ON emergency_details(Employee_id);
+
