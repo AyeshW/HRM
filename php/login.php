@@ -1,6 +1,8 @@
 <?php
     include '../config/db_connection.php';
-    $conn = Opencon();
+    $dbuser = 'root';
+    $dbpass = '';
+    $conn = Opencon($dbuser,$dbpass);
     session_start();
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
         //header("location: logout.php");
