@@ -620,7 +620,7 @@ CREATE PROCEDURE employeeByPayGrade(IN given_pay_grade_id VARCHAR(7))
 
 BEGIN
 
-SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN payroll_info NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE payroll_info.pay_grade_id = given_pay_grade_id ;
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN payroll_info using(Employee_id) JOIN employementdetails using (Employee_id) JOIN department using (department_id) JOIN employment_status on employementdetails.Employement_status_id=employment_status.Status_ID JOIN job_titile on employementdetails.job_id=job_titile.Job_ID WHERE payroll_info.pay_grade_id = given_pay_grade_id ;
 
 END $$
 
@@ -636,7 +636,7 @@ CREATE PROCEDURE employeeByJobTitle(IN given_job_title_id VARCHAR(7))
 
 BEGIN
 
-SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE employementdetails.job_id = given_job_title_id ;
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.job_id = given_job_title_id ;
 
 END $$
 
@@ -652,7 +652,7 @@ CREATE PROCEDURE employeeByStatus(IN given_status_id VARCHAR(7))
 
 BEGIN
 
-SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE employementdetails.Employement_status_id = given_status_id ;
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.Employement_status_id = given_status_id ;
 
 END $$
 
@@ -670,7 +670,7 @@ CREATE PROCEDURE employeeByDepartment(IN given_department_id VARCHAR(7))
 
 BEGIN
 
-SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee NATURAL JOIN employementdetails NATURAL  JOIN department NATURAL JOIN employment_status NATURAL JOIN job_titile WHERE employementdetails.department_id = given_department_id ;
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.department_id = given_department_id ;
 
 END $$
 
@@ -686,7 +686,7 @@ CREATE PROCEDURE getEmergencyDetails(IN Employee_id VARCHAR(7))
 
 BEGIN
 
-SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee_id= Employee_id;
+SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee.Employee_id= Employee_id;
 
 END $$
 
@@ -766,7 +766,7 @@ create FUNCTION remaining_casual_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE casual int(11);
-set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where Employee.employee_id=E_id)));
 return casual;
 end
 $$
@@ -778,7 +778,7 @@ create FUNCTION remaining_annual_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE annual int(11);
-set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where Employee.employee_id=E_id)));
 return annual;
 end
 $$
@@ -789,7 +789,7 @@ create FUNCTION remaining_maternity_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE maternity int(11);
-set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)));
+set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where Employee.employee_id=E_id)));
 return maternity;
 end
 $$
@@ -800,7 +800,7 @@ create FUNCTION remaining_no_pay_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE no_pay int(11);
-set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)));
+set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where Employee.employee_id=E_id)));
 return no_pay;
 end
 $$
