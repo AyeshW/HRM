@@ -1,0 +1,90 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>Add HRM</title>
+</head>
+<body>
+<div class="container">
+    <form action="./php/addUser.php" method="POST">
+        <b>General Details</b><br>
+        Employee ID <br>
+        <input type="text" class="form-control" name="empID" placeholder="Enter Employee ID">
+        <br>
+        First Name <br>
+        <input type="text" class="form-control" name="fname" placeholder="Enter First Name">
+        <br>
+        Middle Name <br>
+        <input type="text" class="form-control" name="mname" placeholder="Enter Middle Name">
+        <br>
+        Last Name <br>
+        <input type="text" class="form-control" name="lname" placeholder="Enter Last Name">
+        <br>
+        Birthday <br>
+        <input type="date" class="form-control" name="bod" placeholder="Enter Birthday">
+        <br>
+        Marital Status <br>
+        <select class="form-control" name="marital" placeholder="Enter Marital status">
+            <option>Married</option>
+            <option>Unmarried</option>
+        </select>
+
+        Username <br>
+        <input type="text" class="form-control" name="username" placeholder="Enter Username">
+        <br>
+        Password for HRM <br>
+        <input type="password" class="form-control" name="password" placeholder="Enter Password">
+        <br>
+        Database Username <br>
+        <input type="text" class="form-control" name="dbuser" placeholder="Enter Database Username">
+        <br>
+        Database Password <br>
+        <input type="password" class="form-control" name="dbpass" placeholder="Enter Database Password">
+        <br>
+        Type <br>
+        <select class="form-control" name="type" placeholder="Enter Type">
+            <option>HRM</option>
+
+        </select>
+        <br>
+        Gender <br>
+        <select class="form-control" name="gender" placeholder="Enter Marital status">
+            <option>Male</option>
+            <option>Female</option>
+        </select>
+        Supervisor Employee ID <br>
+        <input type="text" class="form-control" name="supEmpID" placeholder="Enter Supervisor Employee ID">
+        <br>
+
+
+        <b>Employement status Details</b><br>
+
+        Employement Status ID <br>
+        <select class="form-control" name="empStatID" placeholder="Enter Status ID">
+            <option>2</option>
+
+        </select>
+        Department ID <br>
+        <select class="form-control" name="depID" placeholder="Enter Department ID">
+            <option>100</option>
+        </select>
+        Job ID <br>
+        <select class="form-control" name="jobID" placeholder="Enter Job ID">
+            <option>1</option>
+
+        </select>
+
+
+
+
+
+
+        <button class="btn btn-primary" type="submit">ADD</button>
+        <br>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>
