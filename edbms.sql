@@ -654,6 +654,24 @@ END $$
 
 DELIMITER ;
 
+--addEmployee procedure--
+DELIMITER $$
+
+CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
+
+BEGIN
+START TRANSACTION;
+IF username is null or password is null then
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+else
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+INSERT INTO user (Employee_id,username,password,type,dbname,dbpass) values (Employee_id,username,password,type,dbuser,dbpass);
+END IF;
+COMMIT;
+END $$
+
 
 
 --Functions--
@@ -708,7 +726,5 @@ delimiter ;
 
 
 
-CREATE UNIQUE INDEX employeeIndex ON employee(Employee_id);
 
-CREATE UNIQUE INDEX emergencyIndex ON emergency_details(Employee_id);
 
