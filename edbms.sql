@@ -193,7 +193,7 @@ DELIMITER ;
 --
 
 CREATE TABLE `employee_leaves` (
-  `Leave_id` varchar(7) NOT NULL,
+  `Leave_id` INT(7) primary key NOT NULL AUTO_INCREMENT,
   `Employee_id` varchar(7) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
@@ -437,7 +437,7 @@ CREATE TABLE `user` (
   `password` varchar(255) DEFAULT NULL,
   `dbname` varchar(20) NOT NULL,
   `dbpass` varchar(255) NOT NULL,
-  `type` enum('HRM','Employee') NOT NULL,
+  `type` enum('Admin','HRM','Employee') NOT NULL,
   PRIMARY KEY (`Employee_id`),
     FOREIGN KEY (`Employee_id`) REFERENCES `Employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE)  
 
@@ -497,11 +497,6 @@ ALTER TABLE `employee`
   
   ADD KEY `Employee_Employee_Employee_id_fk` (`supervisor_emp_id`);
 
---
--- Indexes for table `employee_leaves`
---
-ALTER TABLE `employee_leaves`
-  ADD PRIMARY KEY (`Leave_id`);
 
 --
 -- Indexes for table `employementdetails`
@@ -583,6 +578,12 @@ ALTER TABLE `Address`
 --
 ALTER TABLE `employee`
   ADD CONSTRAINT `Employee_Employee_Employee_id_fk` FOREIGN KEY (`supervisor_emp_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `employee_leaves`
+--
+ALTER TABLE `employee_leaves`
+   add FOREIGN KEY (`Employee_id`) REFERENCES `employee` (`Employee_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `employementdetails`
@@ -698,7 +699,7 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
+CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('Admin','HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
 
 BEGIN
 START TRANSACTION;
@@ -759,6 +760,18 @@ END $$
 
 DELIMITER ;
 
+--procedure to submit leave application form--
+
+
+delimiter $$ 
+CREATE PROCEDURE applyLeave(IN Employee_id varchar(7),start_date date, end_date date,Leave_Type enum('Annual','Casual','Maternity','No_pay'),reason varchar(20))
+
+BEGIN
+INSERT INTO employee_leaves (Employee_id,start_date,end_date,Leave_Type,reason,status) VALUES (Employee_id,start_date,end_date,Leave_Type,reason,'Pending');
+END 
+$$
+DELIMITER ;
+
 
 
 --Functions--
@@ -767,7 +780,7 @@ create FUNCTION remaining_casual_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE casual int(11);
-set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where Employee.employee_id=E_id)));
+set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
 return casual;
 end
 $$
@@ -779,7 +792,7 @@ create FUNCTION remaining_annual_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE annual int(11);
-set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where Employee.employee_id=E_id)));
+set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
 return annual;
 end
 $$
@@ -790,7 +803,7 @@ create FUNCTION remaining_maternity_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE maternity int(11);
-set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where Employee.employee_id=E_id)));
+set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)));
 return maternity;
 end
 $$
@@ -801,7 +814,7 @@ create FUNCTION remaining_no_pay_leaves(E_id varchar(7))
 RETURNS int(11)
 BEGIN
 DECLARE no_pay int(11);
-set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where Employee.employee_id=E_id)));
+set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)));
 return no_pay;
 end
 $$
@@ -844,3 +857,6 @@ END IF;
 END $$
 
 DELIMITER ;
+
+
+
