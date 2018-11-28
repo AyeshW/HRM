@@ -7,22 +7,22 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
+if(isset($_GET["empID"])){
+    $empID=$_GET["empID"];
+    
+    $conn = OpenCon("root","");
+    $stmt = $conn->prepare('CALL getEmergencyDetails(?)');
+    $stmt->bind_param('s',$empID);
+    $stmt->execute();
+    $allData = $stmt->get_result();
 
-$conn = OpenCon("root","");
-
-$empID=$_GET["empID"];
-
-$stmt = $conn->prepare("CALL getEmergencyDetails($empID)");
-$stmt->execute();
-$allData = $stmt->get_result();
-
-
-$array = array();
+    $array = array();
 while($row = mysqli_fetch_assoc($allData)){
     $array[] = $row;
 }
 
-CloseCon($conn);
+}
+
 
 
 ?>
@@ -40,11 +40,11 @@ CloseCon($conn);
         <table class="table">
         <thead>
             <tr>
-            <th scope="col">Employee ID</th>
+            <th scope="col">Name</th>
             <th scope="col">Contact Number</th>
             <th scope="col">Relationship</th>
             <th scope="col">Address</th>
-            <th scope="col">Name</th>
+            
             
 
             </tr>
@@ -54,19 +54,19 @@ CloseCon($conn);
               foreach($array as $details){  
             ?>
             <tr>
-            <th scope="row"><?php echo $details["Employee_id"]; ?></th>
-            <td><?php echo $details["Contact Number"]; ?></td>
+            <td><?php echo $details["name"]; ?></td>
+            <td><?php echo $details["contact_no"]; ?></td>
             <td><?php echo $details["Relationship"]; ?></td>
             <td><?php echo $details["Address"]; ?></td>
-            <td><?php echo $details["Job_Name"]; ?></td>
-            <td><?php echo $details["Name"]; ?></td>
+            
+            
             
             </tr>
               <?php } ?>
         </tbody>
         </table>
 
-        <button href="../index.html">Go to Home</button>
+       
 
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

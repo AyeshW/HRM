@@ -26,8 +26,9 @@ $dbuser=$_POST["dbuser"];
 $dbpass=$_POST["dbpass"];
 $type=$_POST["type"];
 
+
 if(isset($_POST["password"])){
-    $pass=$_POST["password"];
+    $pass=md5($_POST["password"]);
 }
 else{
     $pass=null;
@@ -39,8 +40,13 @@ if(isset($_POST["username"])){
 else{
     $username=null;
 }
-$stmt = $conn->prepare("CALL addEmployee(
-,$username,$pass,$type,$dbuser,$dbpass,$empID,$fname,$mname,$lname,$bod,$marital,$gender,$supEmpID,$empStatID,$depID,$jobID)");
+
+
+
+$stmt = $conn->prepare('CALL addEmployee(
+?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+
+$stmt->bind_param('sssssssssisssiii',$empID,$username,$pass,$type,$dbuser,$dbpass,$fname,$mname,$lname,$bod,$marital,$gender,$supEmpID,$empStatID,$depID,$jobID);
 $stmt->execute();
 $allData = $stmt->get_result();
 

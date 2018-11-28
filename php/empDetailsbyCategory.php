@@ -7,107 +7,73 @@ if (!$_SESSION['loggedin']){
 }
 include '../config/db_connection.php';
 
-$dbhost='localhost';
-$dbname='edbms';
-$username='root';
-$password='';
-
 if(isset($_GET["department"])){
     $dept=$_GET["department"];
     
-    try{
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
+    $conn = OpenCon("root","");
+    $stmt = $conn->prepare('CALL EmployeeByDepartment(?)');
+    $stmt->bind_param('s',$dept);
+    $stmt->execute();
+    $allData = $stmt->get_result();
 
-    $sql = 'CALL EmployeeByDepartment('.$dept.')';
-      
-    
-    $q = $pdo->query($sql);
-    $q->setFetchMode(PDO::FETCH_ASSOC);
-    
     $array = array();
-    while($row = $q->fetch()){
-        $array[] = $row;
+    while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
     }
+
     
-} 
-catch (PDOException $e) {
-    die("Error occurred:" . $e->getMessage());
-    }
 }
 
 if(isset($_GET["payGrade"])){
     $payGrade=$_GET["payGrade"];
     
-    try{
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
+    $conn = OpenCon("root","");
+    $stmt = $conn->prepare('CALL EmployeeBypayGrade(?)');
+    $stmt->bind_param('i',$payGrade);
+    $stmt->execute();
+    $allData = $stmt->get_result();
 
-    $sql = 'CALL EmployeeBypayGrade('.$payGrade.')';
-      
-    
-    $q = $pdo->query($sql);
-    $q->setFetchMode(PDO::FETCH_ASSOC);
-    
     $array = array();
-    while($row = $q->fetch()){
-        $array[] = $row;
+    while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
     }
+
     
-} 
-catch (PDOException $e) {
-    die("Error occurred:" . $e->getMessage());
-    }
 }
 
 if(isset($_GET["empStatus"])){
     $empStatus=$_GET["empStatus"];
     
-    try{
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
+    $conn = OpenCon("root","");
+    $stmt = $conn->prepare('CALL EmployeeByStatus(?)');
+    $stmt->bind_param('i',$empStatus);
+    $stmt->execute();
+    $allData = $stmt->get_result();
 
-    $sql = 'CALL EmployeeByStatus('.$empStatus.')';
-      
-    
-    $q = $pdo->query($sql);
-    $q->setFetchMode(PDO::FETCH_ASSOC);
-    
     $array = array();
-    while($row = $q->fetch()){
-        $array[] = $row;
+    while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
     }
-    
-} 
-catch (PDOException $e) {
-    die("Error occurred:" . $e->getMessage());
-    }
-}
 
+    
+}
 
 if(isset($_GET["jobTitle"])){
     $jobTitle=$_GET["jobTitle"];
     
-    try{
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $username, $password);
-
-    $sql = 'CALL EmployeeByStatus('.$jobTitle.')';
-      
-    
-    $q = $pdo->query($sql);
-    $q->setFetchMode(PDO::FETCH_ASSOC);
-    
+    $conn = OpenCon("root","");
+    $stmt = $conn->prepare('CALL employeeByJobTitle(?)');
+    $stmt->bind_param('i',$jobTitle);
+    $stmt->execute();
+    $allData = $stmt->get_result();
+ 
     $array = array();
-    while($row = $q->fetch()){
-        $array[] = $row;
+    while($row = mysqli_fetch_assoc($allData)){
+    $array[] = $row;
     }
+
     
-} 
-catch (PDOException $e) {
-    die("Error occurred:" . $e->getMessage());
-    }
 }
-
-
-
-
 
 
 
