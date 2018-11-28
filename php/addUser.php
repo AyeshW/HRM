@@ -41,7 +41,7 @@ else{
     $username=null;
 }
 
-print_r ($empID.$username.$pass.$type.$dbuser.$dbpass.$fname.$mname.$lname.$bod.$marital.$gender.$supEmpID.$empStatID.$depID.$jobID);
+
 
 $stmt = $conn->prepare('CALL addEmployee(
 ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
@@ -49,7 +49,7 @@ $stmt = $conn->prepare('CALL addEmployee(
 $stmt->bind_param('sssssssssisssiii',$empID,$username,$pass,$type,$dbuser,$dbpass,$fname,$mname,$lname,$bod,$marital,$gender,$supEmpID,$empStatID,$depID,$jobID);
 $stmt->execute();
 $allData = $stmt->get_result();
-echo ($allData);
+
 CloseCon($conn);
 
 

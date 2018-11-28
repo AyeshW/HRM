@@ -709,6 +709,7 @@ else
 INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
 INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
 INSERT INTO user (Employee_id,username,password,type,dbname,dbpass) values (Employee_id,username,password,type,dbuser,dbpass);
+
 END IF;
 COMMIT;
 END $$
