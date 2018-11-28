@@ -1,11 +1,11 @@
 <?php
     include '../config/db_connection.php';
-    $con = Opencon();
+    
     session_start();
-    if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-        //header("location: logout.php");
-        exit;
-    }
+    $dbuser=$_SESSION["dbuser"];
+    $dbpass = $_SESSION["dbpass"];
+    $con = Opencon($dbuser,$dbpass);
+    
     if(isset($_POST['submit'])) {
 	
 	
@@ -24,7 +24,7 @@
         header("Location:../AddEmployee.html?msg=Inserted successfully!");            
         exit();
     }
-
+    CloseCon($conn);
         
 ?>
     
