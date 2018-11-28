@@ -102,13 +102,13 @@ if($stmt = $conn->prepare($sql)) {
 }
 ?> -->*/
 
-
 $stmt = $conn->prepare('CALL addDepartment(
 ?,?,?,?)');
 
-$stmt->bind_param('ssss', $deptId, $deptName, $building, $description);
+$stmt->bind_param('ssss',$deptId,$deptName,$building,$description);
 $stmt->execute();
 $allData = $stmt->get_result();
+
 CloseCon($conn);
 
 

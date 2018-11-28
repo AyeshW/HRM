@@ -610,8 +610,10 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`Employee_id`, `username`, `password`, `dbname`, `dbpass`, `type`) VALUES
-('10001', 'Ayesh', 'ayesh123', 'root', '', 'Employee');
+
+INSERT INTO `user` (`Employee_id`, `username`, `password`, `type`,`dbname`,`dbpass`) VALUES
+(10001, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin','root',''),(10002, 'emp', '21232f297a57a5a743894a0e4a801fc3', 'Employee','root',''),(10003, 'emp', '21232f297a57a5a743894a0e4a801fc3', 'HRM','root','');
+
 
 --
 -- Triggers `user`
@@ -799,3 +801,327 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+/* Function for selecting employee on pay grade */
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByPayGrade(IN given_pay_grade_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN payroll_info using(Employee_id) JOIN employementdetails using (Employee_id) JOIN department using (department_id) JOIN employment_status on employementdetails.Employement_status_id=employment_status.Status_ID JOIN job_titile on employementdetails.job_id=job_titile.Job_ID WHERE payroll_info.pay_grade_id = given_pay_grade_id ;
+
+END $$
+
+DELIMITER ;
+
+
+\
+/* Function for selecting employee on Job Title */
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByJobTitle(IN given_job_title_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.job_id = given_job_title_id ;
+
+END $$
+
+DELIMITER ;
+
+
+
+/* Function for selecting employee on employement status*/
+
+DELIMITER $$
+
+CREATE PROCEDURE employeeByStatus(IN given_status_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.Employement_status_id = given_status_id ;
+
+END $$
+
+DELIMITER ;
+
+
+
+/* Function for selecting employee on department */
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS employeeByDepartment$$
+
+CREATE PROCEDURE employeeByDepartment(IN given_department_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,last_name,birthday,Gender,supervisor_emp_id,Department_Name,Job_Name,Status_name FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) WHERE employementdetails.department_id = given_department_id ;
+
+END $$
+
+DELIMITER ;
+
+--procedure for getting user details by user id--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS getEmergencyDetails$$
+
+CREATE PROCEDURE getEmergencyDetails(IN Employee_id VARCHAR(7))
+
+BEGIN
+
+SELECT name,contact_no,Relationship,Address from employee NATURAL JOIN emergency_details where Employee.Employee_id= Employee_id;
+
+END $$
+
+DELIMITER ;
+
+
+
+--addEmployee procedure--
+
+DELIMITER $$
+
+CREATE PROCEDURE addEmployee(IN Employee_id varchar(7), username VARCHAR(20),password varchar(255), type enum('Admin','HRM','Employee'),dbuser varchar(20),dbpass varchar(255),First_name varchar(20),Middle_name varchar(20),Last_name varchar(20),birthday date,Marital_status enum('Unmarried','Married'),Gender enum('Male','Female'), supervisor_empid varchar(7),Employement_status_id varchar(7),department_id varchar(7),job_id varchar(7))
+
+BEGIN
+START TRANSACTION;
+IF username is null or password is null then
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+else
+INSERT INTO employee (Employee_id,First_Name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_emp_id) values (Employee_id,First_name,Middle_name,Last_name,birthday,Marital_status,Gender,supervisor_empid);
+INSERT INTO employementdetails (Employee_id,Employement_status_id,department_id,job_id) values (Employee_id,Employement_status_id,department_id,job_id);
+INSERT INTO user (Employee_id,username,password,type,dbname,dbpass) values (Employee_id,username,password,type,dbuser,dbpass);
+
+END IF;
+COMMIT;
+END $$
+
+--procedure for add new departments to department table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addDepartment$$
+
+CREATE PROCEDURE addDepartment(IN Department_ID VARCHAR(7),Department_Name varchar(20),Building varchar(20),Description varchar(100))
+
+BEGIN
+
+INSERT INTO department (Department_ID,Department_Name,Building,Description) values (Department_ID,Department_Name,Building,Description);
+END $$
+
+DELIMITER ;
+
+--procedure for add new Job titles to job_titiles table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addJobTitle$$
+
+CREATE PROCEDURE addJobTitle(IN Job_ID varchar(7), Job_Name varchar(20))
+
+BEGIN
+
+INSERT INTO job_titile (Job_ID, Job_Name) values (Job_ID, Job_Name);
+END $$
+
+DELIMITER ;
+
+--procedure to add new employment status to employment_status table--
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS addEmploymentStatus$$
+
+CREATE PROCEDURE addEmploymentStatus(IN Status_ID varchar(7), Status_name varchar(20))
+
+BEGIN
+
+INSERT INTO employment_status (Status_ID,Status_name) values (Status_ID,Status_name);
+END $$
+
+DELIMITER ;
+
+--procedure to submit leave application form--
+
+
+delimiter $$ 
+CREATE PROCEDURE applyLeave(IN Employee_id varchar(7),start_date date, end_date date,Leave_Type enum('Annual','Casual','Maternity','No_pay'),reason varchar(20))
+
+BEGIN
+INSERT INTO employee_leaves (Employee_id,start_date,end_date,Leave_Type,reason,status) VALUES (Employee_id,start_date,end_date,Leave_Type,reason,'Pending');
+END 
+$$
+DELIMITER ;
+
+
+
+--Functions--
+delimiter $$
+create FUNCTION remaining_casual_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE casual int(11);
+set casual=(select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+return casual;
+end
+$$
+delimiter ;
+
+
+delimiter $$
+create FUNCTION remaining_annual_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE annual int(11);
+set annual=(select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)));
+return annual;
+end
+$$
+delimiter ;
+
+delimiter $$
+create FUNCTION remaining_maternity_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE maternity int(11);
+set maternity=(select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)));
+return maternity;
+end
+$$
+delimiter ;
+
+delimiter $$
+create FUNCTION remaining_no_pay_leaves(E_id varchar(7))
+RETURNS int(11)
+BEGIN
+DECLARE no_pay int(11);
+set no_pay=(select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)));
+return no_pay;
+end
+$$
+delimiter ;
+
+--procedures for getting remaining leave counts by employee_id--
+
+delimiter $$
+create PROCEDURE remaining_no_pay_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select no_pay_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select no_pay_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+delimiter $$
+create PROCEDURE remaining_casual_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select casual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select casual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+
+delimiter $$
+create PROCEDURE remaining_annual_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select annual_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select annual_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+delimiter $$
+create PROCEDURE remaining_maternity_leaves_procedure(IN E_id varchar(7))
+BEGIN
+
+select((select maternity_leaves from employee NATURAL JOIN payroll_info NATURAL JOIN pay_grade where Employee.employee_id = E_id)- (select maternity_count from taken_no_of_leaves where employee_id=E_id)) as number;
+
+end
+$$
+delimiter ;
+
+/* Procedure for viewing personal information 
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS viewPersonalInfo$$
+
+CREATE PROCEDURE viewPersonalInfo(IN given_employee_id VARCHAR(7))
+
+BEGIN
+
+SELECT Employee_id,first_name,supervisor_emp_id,Department_Name,Job_Name,Status_name,pay_grade_id FROM employee JOIN employementdetails using(Employee_id) JOIN department using (department_id) jOIN employment_status on employementdetails.employement_status_id = employment_status.status_id JOIN job_titile using (Job_id) JOIN payroll_info using (Employee_id) WHERE employementdetails.employee_id = given_employee_id ;
+
+END $$
+
+DELIMITER ; */
+
+/* Procedure for viewing personal information 
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS viewTakenLeaveInfo$$
+
+CREATE PROCEDURE viewTakenLeaveInfo(IN given_employee_id VARCHAR(7))
+
+BEGIN
+if (select gender from employee where employee_id=given_employee_id) ='Male'THEN
+
+SELECT Annual_count,casual_count,no_pay_count FROM taken_no_of_leaves WHERE taken_no_of_leaves.Employee_id=given_employee_id;
+
+else
+
+SELECT Annual_count,casual_count,maternity_count,no_pay_count FROM taken_no_of_leaves WHERE taken_no_of_leaves.Employee_id=given_employee_id;
+
+END IF;
+END $$
+
+DELIMITER ;
+
+*/
+
+delimiter $$
+create PROCEDURE viewEmployeeInfo(IN E_id varchar(7))
+BEGIN
+
+select * from all_employee_data_for_admin where all_employee_data_for_admin.Employee_id = E_id ;
+end
+$$
+delimiter ;
+
+
+-- database user adding --
+
+CREATE USER 'universal'@'localhost' IDENTIFIED BY '1234';
+GRANT SELECT ON edbms.user TO 'universal'@'localhost';
+
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin@123';
+CREATE USER 'HRM'@'localhost' IDENTIFIED BY 'HRM@123';
+CREATE USER 'EMP'@'localhost' IDENTIFIED BY 'EMP@123';
+
+GRANT ALL PRIVILEGES ON edbms.address TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.department TO  'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.dependent_info TO  'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.emergency_details TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.employee TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.employee_leaves TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.employementdetails TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.employment_status TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.job_title TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.organization TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.payroll_info TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON edbms.pay_grade TO 'admin'@'localhost';
+

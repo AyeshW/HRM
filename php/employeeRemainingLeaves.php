@@ -1,4 +1,8 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 if (!$_SESSION['loggedin']){ 
     header("Location:../index.html");
@@ -8,26 +12,13 @@ include '../config/db_connection.php';
 
 $dbuser = $_SESSION["dbuser"];
 $dbpass = $_SESSION["dbpass"];
-$con = Opencon($dbuser,$dbpass);
+$conn = Opencon($dbuser,$dbpass);
 
 
 #$empID= $_SESSION['Employee_id'];
 $empID="10001";
 
 
-$stmt = $conn->prepare('CALL remaining_annual_leaves_procedure(?)');
-$stmt->bind_param('s',$empID);
-$stmt->execute();
-
-$remAnnual = $stmt->get_result();
-
-$array = array();
-while($row = mysqli_fetch_assoc($remAnnual)){
-    $array[] = $row;
-}
-$remAnnual=$array[0]['number'];
-echo($remAnnual);
-
 
 $stmt = $conn->prepare('CALL remaining_annual_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
@@ -40,13 +31,15 @@ while($row = mysqli_fetch_assoc($remAnnual)){
     $array[] = $row;
 }
 $remAnnual=$array[0]['number'];
-echo($remAnnual);
 
 
-$stmt = $conn->prepare('CALL remaining_casual_leaves_procedure(?)');
+$stmt->close();
+
+
+if($stmt = $conn->prepare('CALL remaining_casual_leaves_procedure(?)')){
 $stmt->bind_param('s',$empID);
 $stmt->execute();
-
+}
 $remCasual = $stmt->get_result();
 
 $array = array();
@@ -54,7 +47,8 @@ while($row = mysqli_fetch_assoc($remCasual)){
     $array[] = $row;
 }
 $remCasual=$array[0]['number'];
-echo($remCasual);
+
+$stmt->close();
 
 
 $stmt = $conn->prepare('CALL remaining_maternity_leaves_procedure(?)');
@@ -68,8 +62,8 @@ while($row = mysqli_fetch_assoc($remMaternity)){
     $array[] = $row;
 }
 $remMaternity=$array[0]['number'];
-echo($remMaternity);
 
+$stmt->close();
 
 $stmt = $conn->prepare('CALL remaining_no_pay_leaves_procedure(?)');
 $stmt->bind_param('s',$empID);
@@ -82,8 +76,8 @@ while($row = mysqli_fetch_assoc($remNoPay)){
     $array[] = $row;
 }
 $remNoPay=$array[0]['number'];
-echo($remMaternity);
 
+$stmt->close();
 
 CloseCon($conn);
 

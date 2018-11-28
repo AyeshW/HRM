@@ -42,7 +42,8 @@ $sql = "INSERT INTO job_titile(Job_ID,Job_Name) VALUES(?,?)";
 if($stmt = $conn->prepare($sql)) {
     $stmt->bind_param('ss',$jobID,$jobTitle);
     $stmt->execute();
-    if($conditionSet) {
+
+    if($stmt) {
 
         ?>
         <!DOCTYPE html>
