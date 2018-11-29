@@ -19,7 +19,7 @@ GRANT ALL PRIVILEGES ON edbms.payroll_info TO 'admin'@'localhost';
 GRANT ALL PRIVILEGES ON edbms.pay_grade TO 'admin'@'localhost';
 
 
-GRANT SELECT ON edbms.all_employee_data_for_admin TO 'admin'@'localhost'
+GRANT SELECT ON edbms.all_employee_data_for_admin TO 'admin'@'localhost';
 GRANT EXECUTE ON PROCEDURE addEmployee TO 'admin'@'localhost';
 GRANT EXECUTE ON PROCEDURE addDepartment TO 'admin'@'localhost';
 
