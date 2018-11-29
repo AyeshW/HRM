@@ -1014,6 +1014,5 @@ delimiter ;
 
 
 --indexing--
-CREATE INDEX employeeByDepatment_index ON employee(department);
 CREATE INDEX leaves_index ON employee_leaves (status);
 
